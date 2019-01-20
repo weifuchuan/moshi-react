@@ -1,0 +1,1 @@
+schemats generate -c mysql://root@localhost/moshi  -o db.ts
