@@ -11,7 +11,7 @@ export default function Panel({
 	style?: React.CSSProperties;
 }) {
 	return (
-		<div className={`LoginPanel ${className || ''}`} style={style}>
+		<div className={`Panel ${className || ''}`} style={style}>
 			{children}
 		</div>
 	);

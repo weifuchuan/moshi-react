@@ -50,6 +50,10 @@ class NormalLoginForm extends React.Component<
 		this.props.form.validateFields((err, values: LoginData) => {
 			if (!err) {
 				this.props.login(values);
+				(async () => {
+					const captchaImg = await this.props.getCaptcha();
+					this.setState({ captchaImg });
+				})();
 			}
 		});
 	};

@@ -30,7 +30,8 @@
   "exclude": [
     "node_modules",
     "build",
-    "flow-typed"
+    "flow-typed",
+    "dist"
   ],
   "module": "ESNext"
 }

@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
+import "./index.scss";
+import Layout from "@/teacher/layouts/Layout";
+import useTitle from "@/common/hooks/useTitle";
+import { packToClassComponent } from "@/common/kit/functions";
 
-export default function Home(){
+function Home() {
+  useTitle("默识 - 作者端");
+
   return (
-    <div>
-      
-    </div>
-  )
+    <Layout>
+      <div className="Home">
+        <div>
+
+        </div>
+      </div>
+    </Layout>
+  );
 }
+
+export default packToClassComponent(Home);

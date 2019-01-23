@@ -1,36 +1,43 @@
 import React from "react";
 import Layout from "@/teacher/layouts/Layout";
 import { Control } from "react-keeper";
-import RegPanel from "@/common/components/RegPanel";
 import "./index.scss";
 import useTitle from "@/common/hooks/useTitle";
 import { connect } from "react-redux";
 import { setMe } from "@/teacher/store/me/actions";
-import { reg } from "@/common/models/account";
+import {
+  Account,
+  activate,
+  reg,
+  reSendActivateEmail
+} from "@/common/models/account";
+import { State } from "@/teacher/store/state_type";
+import ActivatePanel from "@/common/components/ActivatePanel";
 import { message } from "antd";
-import { fetchBase64Image } from "@/common/kit/req";
 
 interface Props {
-  setMe: typeof setMe;
+  me: Account;
+  activate: typeof activate;
 }
 
-function Reg({ setMe }: Props) {
-  useTitle("注册 | 默识 - 作者端");
+function Activate({ me }: Props) {
+  useTitle("激活 | 默识 - 作者端");
 
   return (
     <Layout>
-      <div className="Reg">
-        <RegPanel
-          onReg={async ({ email, password, nickName, captcha }) => {
-            try {
-              const account = await reg(email, nickName, password, captcha);
-              setMe(account);
-            } catch (error) {
-              message.error(error);
+      <div className="Activate">
+        <ActivatePanel
+          email={me.email}
+          resend={reSendActivateEmail}
+          confirm={async code => {
+            let ret = await activate(code);
+            if (ret.state === "ok") {
+              message.success("激活成功");
+              Control.go("/");
+            } else {
+              message.error("激活失败");
             }
           }}
-          toLogin={() => Control.go("/login")}
-          getCaptcha={() => fetchBase64Image(`/reg/captcha?r=${Math.random()}`)}
         />
       </div>
     </Layout>
@@ -38,6 +45,8 @@ function Reg({ setMe }: Props) {
 }
 
 export default connect(
-  null,
-  { setMe }
-)(Reg);
+  (state: State) => ({
+    me: state.me!
+  }),
+  { activate }
+)(Activate);

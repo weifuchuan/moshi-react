@@ -112,7 +112,6 @@ export default {
 							use: [
 								'style-loader',
 								cssLoader,
-								postcssLoader,
 								scssLoader
 							]
 						},
@@ -122,13 +121,12 @@ export default {
 							use: [
 								'style-loader',
 								cssLoader,
-								postcssLoader,
 								lessLoader
 							]
 						},
 						{
 							test: /\.css$/,
-							use: [ 'style-loader', cssLoader, postcssLoader ]
+							use: [ 'style-loader', cssLoader ]
 						}
 					]
 				: [
@@ -174,7 +172,18 @@ export default {
 					name: 'static/media/[name].[hash:8].[ext]',
 					fallback: 'file-loader'
 				}
-			}
+			},
+			{
+				test: /\.(txt)$/,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							name: 'static/media/[name].[hash:8].[ext]',
+						},
+					},
+				],
+			},
 		]
 	},
 
