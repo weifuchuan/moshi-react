@@ -1,1 +1,2 @@
+export const SET_COURSES="SET_COURSES"; 
 export const FETCH_MY_COURSES="FETCH_MY_COURSES"; 

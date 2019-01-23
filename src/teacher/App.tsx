@@ -7,7 +7,7 @@ import {
   buildUnlockFilter,
   buildUnloggedFilter
 } from '@/common/kit/filters';
-import { Account, AccountStatus, probeLoggedAccount } from '@/common/models/account';
+import { Account, AccountStatus, AccountAPI } from '@/common/models/account';
 import { message } from 'antd';
 import * as React from 'react';
 import { Control, HashRouter, Route } from 'react-keeper';
@@ -118,7 +118,7 @@ class App extends React.Component<{
       if (this.probingStatus === 'start') {
         this.probingStatus = 'doing';
         try {
-          const account = await probeLoggedAccount();
+          const account = await AccountAPI.probeLoggedAccount();
           this.props.setMe(account);
         } catch (err) {}
         this.probingStatus = 'end';

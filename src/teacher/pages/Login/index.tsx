@@ -3,7 +3,7 @@ import Layout from "@/teacher/layouts/Layout";
 import { Control } from "react-keeper";
 import LoginPanel from "@/common/components/LoginPanel";
 import qs from "qs";
-import { login } from "@/common/models/account";
+import { AccountAPI } from "@/common/models/account";
 import { message } from "antd";
 import { connect } from "react-redux";
 import { setMe } from "@/teacher/store/me/actions";
@@ -25,7 +25,7 @@ function Login({ setMe }: Props) {
         <LoginPanel
           onLogin={async ({ email, password, captcha }) => {
             try {
-              const account = await login(email, password, captcha);
+              const account = await AccountAPI.login(email, password, captcha);
               message.success("登录成功");
               setMe(account);
               let nextPath = "/";

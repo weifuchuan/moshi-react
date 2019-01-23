@@ -6,7 +6,7 @@ import "./index.scss";
 import useTitle from "@/common/hooks/useTitle";
 import { connect } from "react-redux";
 import { setMe } from "@/teacher/store/me/actions";
-import { reg } from "@/common/models/account";
+import { AccountAPI } from "@/common/models/account";
 import { message } from "antd";
 import { fetchBase64Image } from "@/common/kit/req";
 
@@ -23,7 +23,7 @@ function Reg({ setMe }: Props) {
         <RegPanel
           onReg={async ({ email, password, nickName, captcha }) => {
             try {
-              const account = await reg(email, nickName, password, captcha);
+              const account = await AccountAPI.reg(email, nickName, password, captcha);
               setMe(account);
             } catch (error) {
               message.error(error);
