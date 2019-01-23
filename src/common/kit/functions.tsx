@@ -32,10 +32,10 @@ export function repeat(f: () => boolean, timeout: number = 1000 / 60) {
 	g(g);
 }
 
-export function packToClassComponent(C: React.FunctionComponent) {
-	return class extends React.Component {
+export function packToClassComponent<P>(C: React.FunctionComponent<P>) {
+	return class extends React.Component<P> {
 		render(): React.ReactNode {
-			return <C />;
+			return <C {...this.props} />;
 		}
 	};
 }

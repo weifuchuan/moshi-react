@@ -1,13 +1,3 @@
-import * as React from 'react';
-import { HashRouter, Route, Filter, Control } from 'react-keeper';
-import './App.scss';
-import { AccountStatus, probeLoggedAccount } from '@/common/models/account';
-import { connect } from 'react-redux';
-import { State } from './store/state_type';
-import { setMe } from './store/me/actions';
-import { Account } from '@/common/models/account';
-import { repeat } from '@/common/kit/functions';
-import { Notifications } from '@material-ui/icons';
 import {
   buildActivatedFilter,
   buildLockFilter,
@@ -17,7 +7,14 @@ import {
   buildUnlockFilter,
   buildUnloggedFilter
 } from '@/common/kit/filters';
-import { message, notification } from 'antd';
+import { Account, AccountStatus, probeLoggedAccount } from '@/common/models/account';
+import { message } from 'antd';
+import * as React from 'react';
+import { Control, HashRouter, Route } from 'react-keeper';
+import { connect } from 'react-redux';
+import './App.scss';
+import { setMe } from './store/me/actions';
+import { State } from './store/state_type';
 
 const Router = HashRouter;
 
@@ -33,7 +30,20 @@ class App extends React.Component<{
       <Router>
         <div className={'container'}>
           <Route
-            path={'/>'}
+            index
+            path={'/'}
+            loadComponent={(cb) => import('./pages/Home').then((C) => cb(C.default))}
+            enterFilter={[
+              /* 已登录，已激活，未锁定，是课程作者 */
+              this.loggedFilter,
+              this.activatedFilter,
+              this.unlockFilter,
+              this.isTeacherFilter
+            ]}
+          />
+          <Route
+            index
+            path={'/home'}
             loadComponent={(cb) => import('./pages/Home').then((C) => cb(C.default))}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
@@ -68,6 +78,7 @@ class App extends React.Component<{
               this.isNotTeacherFilter
             ]}
           />
+          <Route miss component={() => <h1>404</h1>} />
         </div>
       </Router>
     );
@@ -100,6 +111,9 @@ class App extends React.Component<{
   );
 
   componentDidMount() {
+    document.getElementById('preloading')!.parentElement!.removeChild(
+      document.getElementById('preloading')!
+    );
     (async () => {
       if (this.probingStatus === 'start') {
         this.probingStatus = 'doing';

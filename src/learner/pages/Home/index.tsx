@@ -18,11 +18,7 @@ export default class Home extends React.Component<Props> {
   render() {
     return (
       <div className="HomeContainer">
-        <LoginPanel
-          getCaptcha={() => Promise.resolve("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg")}
-          onLogin={() => {}}
-          toReg={() => {}}
-        />
+       
       </div>
     );
   }

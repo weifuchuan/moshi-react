@@ -45,10 +45,8 @@ export async function POST_FORM<Result = Ret>(
   return resp;
 }
 
-export async function fetchBase64Image(uri: string): Promise<string> {
-  let resp = await GET<Blob>(uri, null, { responseType: "blob" });
-  // let response = await fetch(`${baseUrl}${uri}`, {method:"GET",});
-  // let blob = await response.blob();
+export async function fetchBase64Image(uri: string): Promise<string> { 
+  let resp = await GET<Blob>(uri, null, { responseType: "blob" }); 
   let reader = new FileReader();
   return await new Promise(resolve => {
     reader.onloadend = e => {
