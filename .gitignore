@@ -21,6 +21,7 @@ yarn-error.log*
 /.cache
 /.vscode
 /.idea
+/.awcache
 
 *.lock
 *.log 

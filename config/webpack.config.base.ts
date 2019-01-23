@@ -7,6 +7,7 @@ import webpack from 'webpack';
 import pagesConfig from '../src/pages-config';
 import { resolveApp } from './kit';
 
+const { CheckerPlugin } = require('awesome-typescript-loader');
 const TerserPlugin = require('terser-webpack-plugin');
 const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
 
@@ -87,13 +88,18 @@ export default {
           {
             loader: 'babel-loader'
           },
+          // {
+          //   loader: 'awesome-typescript-loader',
+          //   options: {
+          //     useCache: true,
+          //     reportFiles: [ 'src/**/*.{ts,tsx}' ],
+          //     cacheDirectory: '.awcache'
+          //   } 
+          // }
           {
-            loader: 'ts-loader',
-            options: {
-              happyPackMode: true,
-              compilerOptions: {
-                sourceMap: devMode
-              }
+            loader:"ts-loader",
+            options:{
+
             }
           }
         ]
@@ -122,8 +128,8 @@ export default {
         test: /\.css$/,
         use: [
           devMode ? 'style-loader' : MiniCssExtractPluginLoader,
-          postcssLoader,
-          cssLoader
+          cssLoader,
+          postcssLoader
         ]
       },
       {
@@ -161,16 +167,17 @@ export default {
     new webpack.DefinePlugin({
       __DEV__: JSON.stringify(devMode)
     }),
-    new ForkTsCheckerWebpackPlugin({
-      checkSyntacticErrors: true,
-      watch: resolveApp('src')
-    }),
-    new ForkTsCheckerNotifierWebpackPlugin({
-      excludeWarnings: true,
-      skipSuccessful: true,
-      alwaysNotify: false,
-      skipFirstNotification: true
-    }),
+    // new CheckerPlugin(),
+    // new ForkTsCheckerWebpackPlugin({
+    //   checkSyntacticErrors: true,
+    //   watch: resolveApp('src')
+    // }),
+    // new ForkTsCheckerNotifierWebpackPlugin({
+    //   excludeWarnings: true,
+    //   skipSuccessful: true,
+    //   alwaysNotify: false,
+    //   skipFirstNotification: true
+    // }),
     ...htmlWebpackPluginBuild(),
     new HtmlWebpackInlineSourcePlugin(),
     new MiniCssExtractPlugin({

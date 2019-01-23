@@ -31,7 +31,8 @@
     "node_modules",
     "build",
     "flow-typed",
-    "dist"
+    "dist",
+    ".awcache/"
   ],
   "module": "ESNext"
 }
