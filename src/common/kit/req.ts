@@ -1,5 +1,7 @@
 import qs from "qs";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import EventEmitter  from "wolfy87-eventemitter";
+import { fromEvent } from "rxjs";
 
 let baseUrl = "";
 if (__DEV__) {
@@ -45,8 +47,8 @@ export async function POST_FORM<Result = Ret>(
   return resp;
 }
 
-export async function fetchBase64Image(uri: string): Promise<string> { 
-  let resp = await GET<Blob>(uri, null, { responseType: "blob" }); 
+export async function fetchBase64Image(uri: string): Promise<string> {
+  let resp = await GET<Blob>(uri, null, { responseType: "blob" });
   let reader = new FileReader();
   return await new Promise(resolve => {
     reader.onloadend = e => {
@@ -56,9 +58,32 @@ export async function fetchBase64Image(uri: string): Promise<string> {
   });
 }
 
-export async function select<T = object>(uri: "/select" | "/select/teacher" | "/select/manager", sql: string, ...args: any[]): Promise<T[]> {
+export async function select<T = object>(
+  uri: "/select" | "/select/teacher" | "/select/manager",
+  sql: string,
+  ...args: any[]
+): Promise<T[]> {
   let resp = await POST<T[]>(uri, { sql, args }, { responseType: "json" });
   return resp.data;
+}
+
+export function upload(files: File[]) {
+  const form = new FormData();
+  for (let file of files) {
+    form.append("file", file);
+  }
+  const uploadProgress = new EventEmitter();
+  const progress = fromEvent<number>(uploadProgress, "uploadProgress");
+  const response = axios.post(`${baseUrl}/file/upload`, form, {
+    onUploadProgress: evt => {
+      let completed = Math.round((evt.loaded * 100) / evt.total);
+      uploadProgress.emit("uploadProgress", completed);
+    }
+  });
+  return {
+    response,
+    progress
+  };
 }
 
 if (__DEV__) {
@@ -67,4 +92,5 @@ if (__DEV__) {
   (window as any).POST_FORM = POST_FORM;
   (window as any).fetchBase64Image = fetchBase64Image;
   (window as any).select = select;
+  (window as any).upload = upload;
 }

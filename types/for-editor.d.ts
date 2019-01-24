@@ -7,6 +7,7 @@ export interface EditorProps {
 	height?: string;
 	onChange: (value: string) => void;
 	onSave: (value: string) => void;
+	style?:React.CSSProperties;
 }
 
 export default class Editor extends React.Component<EditorProps> {}

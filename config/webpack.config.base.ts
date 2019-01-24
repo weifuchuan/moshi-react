@@ -1,19 +1,19 @@
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import fs from 'fs-extra';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
-import webpack from 'webpack';
-import pagesConfig from '../src/pages-config';
-import { resolveApp } from './kit';
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import fs from "fs-extra";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import webpack from "webpack";
+import pagesConfig from "../src/pages-config";
+import { resolveApp } from "./kit";
 
-const { CheckerPlugin } = require('awesome-typescript-loader');
-const TerserPlugin = require('terser-webpack-plugin');
-const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
+const { CheckerPlugin } = require("awesome-typescript-loader");
+const TerserPlugin = require("terser-webpack-plugin");
+const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-webpack-plugin");
 
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 
-const devMode: boolean = process.env.NODE_ENV !== 'production';
+const devMode: boolean = process.env.NODE_ENV !== "production";
 
 const MiniCssExtractPluginLoader = {
   loader: MiniCssExtractPlugin.loader,
@@ -21,22 +21,22 @@ const MiniCssExtractPluginLoader = {
 };
 
 const postcssLoader = {
-  loader: 'postcss-loader',
+  loader: "postcss-loader",
   options: {
     sourceMap: devMode
   }
 };
 
 const cssLoader = {
-  loader: 'css-loader',
+  loader: "css-loader",
   options: {
     sourceMap: devMode,
-    localIdentName: '[local]__[path][name]--[hash:base64:5]'
+    localIdentName: "[local]__[path][name]--[hash:base64:5]"
   }
 };
 
 const lessLoader = {
-  loader: 'less-loader',
+  loader: "less-loader",
   options: {
     sourceMap: devMode
   }
@@ -44,22 +44,22 @@ const lessLoader = {
 
 const scssLoader = devMode
   ? {
-      loader: 'sass-loader',
+      loader: "sass-loader",
       options: {
         sourceMap: devMode
       }
     }
-  : 'fast-sass-loader';
+  : "fast-sass-loader";
 
 function entryBuild(): webpack.Entry {
   const entry: webpack.Entry = {};
   for (let page of pagesConfig) {
     const { name } = page;
     const indexFile = resolveApp(
-      `src/${name}/${page.entry ? page.entry : 'index.tsx'}`
+      `src/${name}/${page.entry ? page.entry : "index.tsx"}`
     );
     if (fs.existsSync(indexFile)) {
-      entry[name] = [ require.resolve('./polyfills'), indexFile ];
+      entry[name] = [require.resolve("./polyfills"), indexFile];
     } else {
       console.error(`${name} doesn't exsits! `);
     }
@@ -77,7 +77,7 @@ export default {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader'
+            loader: "babel-loader"
           }
         ]
       },
@@ -86,7 +86,7 @@ export default {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader'
+            loader: "babel-loader"
           },
           // {
           //   loader: 'awesome-typescript-loader',
@@ -94,13 +94,11 @@ export default {
           //     useCache: true,
           //     reportFiles: [ 'src/**/*.{ts,tsx}' ],
           //     cacheDirectory: '.awcache'
-          //   } 
+          //   }
           // }
           {
-            loader:"ts-loader",
-            options:{
-
-            }
+            loader: "ts-loader",
+            options: {}
           }
         ]
       },
@@ -108,7 +106,7 @@ export default {
         test: /\.(sa|sc)ss/,
         exclude: /node_modules/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPluginLoader,
+          devMode ? "style-loader" : MiniCssExtractPluginLoader,
           cssLoader,
           postcssLoader,
           scssLoader
@@ -118,7 +116,7 @@ export default {
         test: /\.less/,
         exclude: /node_modules/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPluginLoader,
+          devMode ? "style-loader" : MiniCssExtractPluginLoader,
           cssLoader,
           postcssLoader,
           lessLoader
@@ -127,27 +125,27 @@ export default {
       {
         test: /\.css$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPluginLoader,
+          devMode ? "style-loader" : MiniCssExtractPluginLoader,
           cssLoader,
           postcssLoader
         ]
       },
       {
         test: /\.((png)|(jpe?g)|(gif)|(bmp))$/,
-        loader: 'url-loader',
+        loader: "url-loader",
         options: {
           limit: 4096,
-          name: 'static/media/[name].[hash:8].[ext]',
-          fallback: 'file-loader'
+          name: "static/media/[name].[hash:8].[ext]",
+          fallback: "file-loader"
         }
       },
       {
         test: /\.(txt)$/,
         use: [
           {
-            loader: 'file-loader',
+            loader: "file-loader",
             options: {
-              name: 'static/media/[name].[hash:8].[ext]'
+              name: "static/media/[name].[hash:8].[ext]"
             }
           }
         ]
@@ -157,9 +155,9 @@ export default {
 
   // how to resolve modules
   resolve: {
-    extensions: [ '.js', '.jsx', '.ts', '.tsx', '.json' ],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
 
-    plugins: [ new TsconfigPathsPlugin({}) ]
+    plugins: [new TsconfigPathsPlugin({})]
   },
 
   // plugins
@@ -181,27 +179,27 @@ export default {
     ...htmlWebpackPluginBuild(),
     new HtmlWebpackInlineSourcePlugin(),
     new MiniCssExtractPlugin({
-      filename: 'static/css/[name]-[hash:8].css',
-      chunkFilename: 'static/css/[id]-[hash:8].css'
+      filename: "static/css/[name]-[hash:8].css",
+      chunkFilename: "static/css/[id]-[hash:8].css"
     })
   ],
 
   optimization: {
-    minimizer: [ new TerserPlugin() ]
+    minimizer: [new TerserPlugin()]
   }
 } as webpack.Configuration;
 
 function htmlWebpackPluginBuild(): HtmlWebpackPlugin[] {
-  return pagesConfig.map((p) => {
+  return pagesConfig.map(p => {
     return new HtmlWebpackPlugin({
-      chunks: [ p.name ],
+      chunks: [p.name],
       filename: `${p.filename ? p.filename : p.name}.html`, // 配置输出文件名和路径
       template: p.template
         ? resolveApp(`src/${p.name}/${p.template}`)
-        : resolveApp('public/index.html'), // 配置文件模板
+        : resolveApp("public/index.html"), // 配置文件模板
       title: p.title ? p.title : p.name,
       inject: true,
-      ...p.inlineSource ? { inlineSource: p.inlineSource } : {},
+      ...(p.inlineSource ? { inlineSource: p.inlineSource } : {}),
       minify: {
         removeComments: true,
         collapseWhitespace: true,

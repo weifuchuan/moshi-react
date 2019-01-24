@@ -30,9 +30,9 @@ class App extends React.Component<{
       <Router>
         <div className={'container'}>
           <Route
-            index
-            path={'/'}
-            loadComponent={(cb) => import('./pages/Home').then((C) => cb(C.default))}
+            path={'/>'}
+            loadComponent={(cb) =>
+              import('./pages/Home').then((C) => cb(C.default))}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -42,9 +42,9 @@ class App extends React.Component<{
             ]}
           />
           <Route
-            index
-            path={'/home'}
-            loadComponent={(cb) => import('./pages/Home').then((C) => cb(C.default))}
+            path={'/course'}
+            loadComponent={(cb) =>
+              import('./pages/Course').then((C) => cb(C.default))}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -52,25 +52,41 @@ class App extends React.Component<{
               this.unlockFilter,
               this.isTeacherFilter
             ]}
-          />
+          >
+            <Route
+              path={'/apply'}
+              loadComponent={(cb) =>
+                import('./pages/Course/pages/ApplyCourse').then((C) =>
+                  cb(C.default)
+                )}
+            />
+          </Route>
           <Route
             path={'/login>'}
-            loadComponent={(cb) => import('./pages/Login').then((C) => cb(C.default))}
+            loadComponent={(cb) =>
+              import('./pages/Login').then((C) => cb(C.default))}
             enterFilter={[ this.unloggedFilter ]}
           />
           <Route
             path={'/reg>'}
-            loadComponent={(cb) => import('./pages/Reg').then((C) => cb(C.default))}
+            loadComponent={(cb) =>
+              import('./pages/Reg').then((C) => cb(C.default))}
             enterFilter={[ this.unloggedFilter ]}
           />
           <Route
             path={'/activate>'}
-            loadComponent={(cb) => import('./pages/Activate').then((C) => cb(C.default))}
-            enterFilter={[ this.loggedFilter, this.unactivatedFilter, this.unlockFilter ]}
+            loadComponent={(cb) =>
+              import('./pages/Activate').then((C) => cb(C.default))}
+            enterFilter={[
+              this.loggedFilter,
+              this.unactivatedFilter,
+              this.unlockFilter
+            ]}
           />
           <Route
             path={'/apply>'}
-            loadComponent={(cb) => import('./pages/Apply').then((C) => cb(C.default))}
+            loadComponent={(cb) =>
+              import('./pages/Apply').then((C) => cb(C.default))}
             enterFilter={[
               this.loggedFilter,
               this.activatedFilter,
@@ -96,10 +112,14 @@ class App extends React.Component<{
 
   private unactivatedFilter = buildUnactivatedFilter(this);
 
-  private isTeacherFilter = buildRoleFilter(this, AccountStatus.isTeacher, () => {
-    message.error('无教师权限');
-    Control.go('/apply');
-  });
+  private isTeacherFilter = buildRoleFilter(
+    this,
+    AccountStatus.isTeacher,
+    () => {
+      message.error('无教师权限');
+      Control.go('/apply');
+    }
+  );
 
   private isNotTeacherFilter = buildRoleFilter(
     this,
