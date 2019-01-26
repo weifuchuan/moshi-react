@@ -1,15 +1,18 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import rootSagas from './rootSagas';
-import me from './me/reducers';
-import { State } from './state_type';
-import courses from './courses/reducers';
+import { createStore, applyMiddleware, combineReducers, compose } from "redux";
+import createSagaMiddleware from "redux-saga";
+import rootSagas from "./rootSagas";
+import me from "./me/reducers";
+import { State } from "./state_type";
+import courses from "./courses/reducers";
 
 const sagaMiddleware = createSagaMiddleware();
 
+const composeEnhancers =
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
   combineReducers<State>({ me, courses }),
-  applyMiddleware(sagaMiddleware)
+  composeEnhancers(applyMiddleware(sagaMiddleware))
 );
 
 sagaMiddleware.run(rootSagas);

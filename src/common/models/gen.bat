@@ -1,1 +1,1 @@
-schemats generate -c mysql://root:url977782@123.207.28.107/moshi  -o db.ts
+schemats generate -c mysql://root:url977782@123.207.28.107/moshi  -o db.ts && node _remove_ns.js

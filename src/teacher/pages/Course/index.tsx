@@ -11,6 +11,8 @@ import { Tree, Button } from "antd";
 import { AntTreeNode } from "antd/lib/tree";
 import { Control } from "react-keeper";
 import { setCourses } from "@/teacher/store/courses/actions";
+import CourseItem from "./CourseItem";
+import { course } from "../../../common/models/db";
 
 const { TreeNode } = Tree;
 
@@ -20,12 +22,17 @@ interface Props {
   setCourses: typeof setCourses;
 }
 
-const Course: FunctionComponent<Props> = ({ me, courses, children }) => {
+const Course: FunctionComponent<Props> = ({
+  me,
+  courses,
+  children,
+  setCourses
+}) => {
   useTitle("课程管理 | 默识 - 作者端");
 
   useEffect(() => {
     (async () => {
-      let courses1 = await CourseAPI.myCourses();
+      const courses1 = await CourseAPI.myCourses();
       setCourses(courses1);
     })();
   }, []);
@@ -34,8 +41,9 @@ const Course: FunctionComponent<Props> = ({ me, courses, children }) => {
     <Layout>
       <div className="Course">
         <div>
-          <Panel>
+          <Panel style={{overflow:"auto"}} >
             <Button
+              type="primary"
               onClick={() => {
                 Control.go("/course/apply");
               }}
@@ -48,7 +56,15 @@ const Course: FunctionComponent<Props> = ({ me, courses, children }) => {
             >
               申请添加课程
             </Button>
-
+            {courses.map(course => {
+              return (
+                <CourseItem
+                  key={course.id.toString()}
+                  course={course}
+                  onClick={() => Control.go(`/course/detail/${course.id}`)}
+                />
+              );
+            })}
           </Panel>
           {children}
         </div>

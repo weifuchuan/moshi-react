@@ -6,28 +6,28 @@
   justify-content: center;
   align-items: center;
 
-  >div{
+  > div {
     max-width: calc(1080px + 2em);
     height: 100%;
     width: 100%;
     display: flex;
 
-    >div:nth-child(1){
-      flex:1;
-      overflow: hidden;
+    > div:nth-child(1) {
+      flex: 1;
+      overflow: auto;
     }
 
-    >div:nth-child(2){
+    > div:nth-child(2) {
       width: 250px;
       overflow: hidden;
     }
 
-    >div:hover{
+    > div:hover {
       overflow: auto;
     }
   }
 }
 
-.for-line-num{
+.for-line-num {
   padding: 8px 0 8px !important;
 }

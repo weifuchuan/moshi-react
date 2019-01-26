@@ -4,11 +4,13 @@ import EventEmitter  from "wolfy87-eventemitter";
 import { fromEvent } from "rxjs";
 
 let baseUrl = "";
+let staticBaseUrl = "";
 if (__DEV__) {
   baseUrl = "/api";
+  staticBaseUrl="http://localhost:8080"
 }
 
-export { baseUrl };
+export { baseUrl,staticBaseUrl };
 
 export interface Ret {
   state: "ok" | "fail";

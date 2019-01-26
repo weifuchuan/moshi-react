@@ -1,0 +1,15 @@
+.CourseItem{
+  margin:0.5em 0; 
+  padding: 1em;
+  display: flex;
+  align-items: center; 
+  cursor: pointer;
+  
+  :nth-child(1){
+    padding: 4px 8px;
+  }
+}
+
+.CourseItem:hover{
+  background-color: #f0f3ef;   
+}

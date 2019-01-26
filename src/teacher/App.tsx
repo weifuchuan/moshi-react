@@ -6,33 +6,35 @@ import {
   buildUnactivatedFilter,
   buildUnlockFilter,
   buildUnloggedFilter
-} from '@/common/kit/filters';
-import { Account, AccountStatus, AccountAPI } from '@/common/models/account';
-import { message } from 'antd';
-import * as React from 'react';
-import { Control, HashRouter, Route } from 'react-keeper';
-import { connect } from 'react-redux';
-import './App.scss';
-import { setMe } from './store/me/actions';
-import { State } from './store/state_type';
+} from "@/common/kit/filters";
+import { Account, AccountStatus, AccountAPI } from "@/common/models/account";
+import { message } from "antd";
+import * as React from "react";
+import { Control, HashRouter, Route } from "react-keeper";
+import { connect } from "react-redux";
+import "./App.scss";
+import { setMe, probeLogin } from "./store/me/actions";
+import { State } from "./store/state_type";
+import LoadingRoute from "@/common/components/LoadingRoute";
+import { CourseStatus, Course } from "@/common/models/course";
 
 const Router = HashRouter;
 
 class App extends React.Component<{
   logged: boolean;
-  setMe: (account: Account) => void;
+  probeLogin: typeof probeLogin;
   me: Account | null;
+  courses: Course[];
 }> {
-  probingStatus: 'start' | 'doing' | 'end' = 'start';
+  probingStatus: "start" | "doing" | "end" = "start";
 
   render() {
     return (
       <Router>
-        <div className={'container'}>
-          <Route
-            path={'/>'}
-            loadComponent={(cb) =>
-              import('./pages/Home').then((C) => cb(C.default))}
+        <div className={"container"}>
+          <LoadingRoute
+            path={"/>"}
+            imported={import("./pages/Home")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -41,10 +43,9 @@ class App extends React.Component<{
               this.isTeacherFilter
             ]}
           />
-          <Route
-            path={'/course'}
-            loadComponent={(cb) =>
-              import('./pages/Course').then((C) => cb(C.default))}
+          <LoadingRoute
+            path={"/course"}
+            imported={import("./pages/Course")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -53,40 +54,53 @@ class App extends React.Component<{
               this.isTeacherFilter
             ]}
           >
-            <Route
-              path={'/apply'}
-              loadComponent={(cb) =>
-                import('./pages/Course/pages/ApplyCourse').then((C) =>
-                  cb(C.default)
-                )}
+            <LoadingRoute
+              path={"/apply"}
+              imported={import("./pages/Course/pages/ApplyCourse")}
+              enterFilter={[
+                cb => {
+                  const { courses } = this.props;
+                  if (
+                    courses.length !== 0 &&
+                    courses.findIndex(
+                      (course: Course) =>
+                        course.status === CourseStatus.STATUS_INIT
+                    ) !== -1
+                  ) {
+                    message.warn("您尚有申请未通过的课程");
+                    Control.go("/course");
+                  }
+                  cb();
+                }
+              ]}
             />
-          </Route>
-          <Route
-            path={'/login>'}
-            loadComponent={(cb) =>
-              import('./pages/Login').then((C) => cb(C.default))}
-            enterFilter={[ this.unloggedFilter ]}
+            <LoadingRoute
+              path={"/detail/:id"}
+              imported={import("./pages/Course/pages/Detail")}
+            />
+          </LoadingRoute>
+          <LoadingRoute
+            path={"/login>"}
+            imported={import("./pages/Login")}
+            enterFilter={[this.unloggedFilter]}
           />
-          <Route
-            path={'/reg>'}
-            loadComponent={(cb) =>
-              import('./pages/Reg').then((C) => cb(C.default))}
-            enterFilter={[ this.unloggedFilter ]}
+          <LoadingRoute
+            path={"/reg>"}
+            imported={import("./pages/Reg")}
+            enterFilter={[this.unloggedFilter]}
           />
-          <Route
-            path={'/activate>'}
-            loadComponent={(cb) =>
-              import('./pages/Activate').then((C) => cb(C.default))}
+          <LoadingRoute
+            path={"/activate>"}
+            imported={import("./pages/Activate")}
             enterFilter={[
               this.loggedFilter,
               this.unactivatedFilter,
               this.unlockFilter
             ]}
           />
-          <Route
-            path={'/apply>'}
-            loadComponent={(cb) =>
-              import('./pages/Apply').then((C) => cb(C.default))}
+          <LoadingRoute
+            path={"/apply>"}
+            imported={import("./pages/Apply")}
             enterFilter={[
               this.loggedFilter,
               this.activatedFilter,
@@ -116,32 +130,33 @@ class App extends React.Component<{
     this,
     AccountStatus.isTeacher,
     () => {
-      message.error('无教师权限');
-      Control.go('/apply');
+      message.error("无教师权限");
+      Control.go("/apply");
     }
   );
 
   private isNotTeacherFilter = buildRoleFilter(
     this,
-    (account) => !AccountStatus.isTeacher(account),
+    account => !AccountStatus.isTeacher(account),
     () => {
-      message.info('已有教师权限');
-      Control.go('/');
+      message.info("已有教师权限");
+      Control.go("/");
     }
   );
 
   componentDidMount() {
-    document.getElementById('preloading')!.parentElement!.removeChild(
-      document.getElementById('preloading')!
-    );
+    document
+      .getElementById("preloading")!
+      .parentElement!.removeChild(document.getElementById("preloading")!);
     (async () => {
-      if (this.probingStatus === 'start') {
-        this.probingStatus = 'doing';
-        try {
-          const account = await AccountAPI.probeLoggedAccount();
-          this.props.setMe(account);
-        } catch (err) {}
-        this.probingStatus = 'end';
+      if (this.probingStatus === "start") {
+        this.probingStatus = "doing";
+        this.props.probeLogin(() => (this.probingStatus = "end"));
+        // try {
+        //   const account = await AccountAPI.probeLoggedAccount();
+        //   this.props.setMe(account);
+        // } catch (err) {}
+        // this.probingStatus = "end";
       }
     })();
   }
@@ -151,10 +166,11 @@ const ConnectedApp = connect(
   (state: State) => {
     return {
       logged: !!state.me,
-      me: state.me
+      me: state.me,
+      courses: state.courses
     };
   },
-  { setMe }
+  { probeLogin }
 )(App);
 
 export default ConnectedApp;

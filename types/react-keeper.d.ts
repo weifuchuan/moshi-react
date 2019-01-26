@@ -21,7 +21,7 @@ export interface RouteProps {
 	miss?: boolean;
 	enterFilter?: Filter | Filter[];
 	leaveFilter?: Filter | Filter[];
-	children?: JSX.Element;
+	children?: JSX.Element[];
 }
 
 export class Route extends React.Component<RouteProps> {}
