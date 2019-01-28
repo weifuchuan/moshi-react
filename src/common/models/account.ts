@@ -1,9 +1,9 @@
-import { Model } from '../kit/type';
-import { account } from './db';
-import { GET, Ret, POST_FORM } from '../kit/req';
-import BitKit from '@/common/models/BitKit';
+import { Model } from "../kit/type";
+import { IAccount } from "./db";
+import { GET, Ret, POST_FORM } from "../kit/req";
+import BitKit from "@/common/models/BitKit";
 
-type Account = Model<account, { password: string }>;
+type Account = IAccount;
 export { Account };
 
 export const AccountStatus = {
@@ -31,8 +31,8 @@ export const AccountStatus = {
 
 export class AccountAPI {
   static async probeLoggedAccount(): Promise<Account> {
-    const resp = await GET<Ret & { account: Account }>('/login/probe');
-    if (resp.data.state === 'ok') return resp.data.account;
+    const resp = await GET<Ret & { account: Account }>("/login/probe");
+    if (resp.data.state === "ok") return resp.data.account;
     else throw resp.data.msg;
   }
 
@@ -41,12 +41,12 @@ export class AccountAPI {
     password: string,
     captcha: string
   ): Promise<Account> {
-    const resp = await POST_FORM<Ret & { account: Account }>('/login', {
+    const resp = await POST_FORM<Ret & { account: Account }>("/login", {
       email,
       password,
       captcha
     });
-    if (resp.data.state === 'ok') return resp.data.account;
+    if (resp.data.state === "ok") return resp.data.account;
     else throw resp.data.msg;
   }
 
@@ -56,25 +56,25 @@ export class AccountAPI {
     password: string,
     captcha: string
   ): Promise<Account> {
-    const resp = await POST_FORM<Ret & { account: Account }>('/reg', {
+    const resp = await POST_FORM<Ret & { account: Account }>("/reg", {
       email,
       nickName,
       password,
       captcha
     });
-    if (resp.data.state === 'ok') return resp.data.account;
+    if (resp.data.state === "ok") return resp.data.account;
     else throw resp.data.msg;
   }
 
   static async activate(authcode: string) {
-    const resp = await POST_FORM<Ret>('/reg/activate', {
+    const resp = await POST_FORM<Ret>("/reg/activate", {
       authcode
     });
     return resp.data;
   }
 
   static async reSendActivateEmail() {
-    const resp = await GET<Ret>('/reg/reSendActivateEmail');
+    const resp = await GET<Ret>("/reg/reSendActivateEmail");
     return resp.data;
   }
 }

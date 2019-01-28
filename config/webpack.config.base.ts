@@ -67,27 +67,31 @@ function entryBuild(): webpack.Entry {
   return entry;
 }
 
+const babelLoader = {
+  loader: 'babel-loader',
+  options: {
+    cacheDirectory: true,
+    
+  }
+};
+
 export default {
   entry: entryBuild(),
   module: {
     // loaders
     rules: [
       {
-        test: /\.(js)|(jsx)|(mjs)/,
+        test: /\.(js)|(jsx)/,
         exclude: /node_modules/,
         use: [
-          {
-            loader: "babel-loader"
-          }
+          babelLoader
         ]
       },
       {
         test: /\.(ts)|(tsx)/,
         exclude: /node_modules/,
         use: [
-          {
-            loader: "babel-loader"
-          },
+          babelLoader,
           // {
           //   loader: 'awesome-typescript-loader',
           //   options: {
@@ -98,7 +102,9 @@ export default {
           // }
           {
             loader: "ts-loader",
-            options: {}
+            options: {
+              transpileOnly: devMode
+            }
           }
         ]
       },
@@ -140,7 +146,7 @@ export default {
         }
       },
       {
-        test: /\.(txt)$/,
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
           {
             loader: "file-loader",
@@ -166,10 +172,14 @@ export default {
       __DEV__: JSON.stringify(devMode)
     }),
     // new CheckerPlugin(),
-    // new ForkTsCheckerWebpackPlugin({
-    //   checkSyntacticErrors: true,
-    //   watch: resolveApp('src')
-    // }),
+    ...(devMode
+      ? [
+          new ForkTsCheckerWebpackPlugin({
+            checkSyntacticErrors: true,
+            watch: resolveApp("src")
+          })
+        ]
+      : []),
     // new ForkTsCheckerNotifierWebpackPlugin({
     //   excludeWarnings: true,
     //   skipSuccessful: true,

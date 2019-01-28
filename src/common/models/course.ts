@@ -1,10 +1,10 @@
 import { Model } from "../kit/type";
-import { course } from "./db";
+import { ICourse } from "./db";
 import { GET, POST_FORM, Ret } from "@/common/kit/req";
 import BitKit from "@/common/models/BitKit";
 import { Article } from "./article";
 
-export type Course = Model<course, {}>;
+export type Course = ICourse;
 
 export const CourseStatus = {
   STATUS_INIT: 0,
@@ -61,7 +61,12 @@ export class CourseAPI {
   static async detail(id: number) {
     const resp = await GET<{
       articles: Article[];
-    }>("/course/detail",{id});
+    }>("/course/detail", { id });
+    return resp.data;
+  }
+
+  static async update(id: number, items: { [key: string]: number | string }) {
+    const resp = await POST_FORM("/course/update", { id, ...items });
     return resp.data;
   }
 }

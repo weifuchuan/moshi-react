@@ -1,0 +1,76 @@
+.IssuePanel {
+  .Title {
+    display: flex;
+    flex-direction: column;
+
+    > :nth-child(1) {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    > :nth-child(2) {
+      margin: 8px 0 15px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e6ebf1;
+      color: #586069;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .TitleText {
+      color: #000;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0.67em 0;
+      @media all {
+        font-weight: 400;
+        line-height: 1.125;
+        margin-bottom: 0;
+        margin-right: 150px;
+        word-wrap: break-word;
+        font-weight: 300;
+        letter-spacing: -1px;
+      }
+    }
+  }
+
+  .State {
+    border-radius: 3px;
+    color: #fff;
+    display: inline-block;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 4px 8px;
+    text-align: center;
+    background-color: #2cbe4e;
+  }
+
+  .DiscussionBucket {
+    display: flex;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e6ebf1;
+
+    .Timeline {
+      flex: 1;
+    }
+
+    .Sidebar {
+      width: 200px;
+    }
+  }
+
+  .NewComment {
+    margin-top: 20px;
+    width: calc(100% - 200px);
+    display: flex;
+
+    // avatar
+    > :nth-child(1) {
+      margin-right: 16px;
+    }
+
+    > :nth-child(2) {
+      flex: 1;
+    }
+  }
+}

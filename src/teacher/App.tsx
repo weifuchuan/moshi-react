@@ -76,9 +76,35 @@ class App extends React.Component<{
             />
             <LoadingRoute
               path={"/detail/:id"}
-              imported={import("./pages/Course/pages/Detail")}
+              imported={import("./pages/Course/pages/Detail")}              
+            />
+            <LoadingRoute
+              path={"/edit-intro/:id"}
+              imported={import("./pages/Course/pages/EditIntro")}
             />
           </LoadingRoute>
+          <LoadingRoute
+            path={"/article/:id>"}
+            imported={import("./pages/Article")}
+            enterFilter={[
+              /* 已登录，已激活，未锁定，是课程作者 */
+              this.loggedFilter,
+              this.activatedFilter,
+              this.unlockFilter,
+              this.isTeacherFilter
+            ]}
+          />
+          <LoadingRoute
+            path={"/issue/:id>"}
+            imported={import("./pages/Issue")}
+            enterFilter={[
+              /* 已登录，已激活，未锁定，是课程作者 */
+              this.loggedFilter,
+              this.activatedFilter,
+              this.unlockFilter,
+              this.isTeacherFilter
+            ]}
+          />
           <LoadingRoute
             path={"/login>"}
             imported={import("./pages/Login")}

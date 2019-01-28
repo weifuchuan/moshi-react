@@ -1,47 +1,40 @@
+import Panel from "@/common/components/Panel";
 import useTitle from "@/common/hooks/useTitle";
 import { Account } from "@/common/models/account";
+import { Course, CourseStatus } from "@/common/models/course";
 import Layout from "@/teacher/layouts/Layout";
+import { fetchMyCourses } from "@/teacher/store/courses/actions";
 import { State } from "@/teacher/store/state_type";
+import { Button } from "antd";
 import React, { FunctionComponent, useEffect } from "react";
-import { connect } from "react-redux";
-import "./index.scss";
-import { Course, CourseAPI, CourseStatus } from "@/common/models/course";
-import Panel from "@/common/components/Panel";
-import { Tree, Button } from "antd";
-import { AntTreeNode } from "antd/lib/tree";
 import { Control } from "react-keeper";
-import { setCourses } from "@/teacher/store/courses/actions";
+import { connect } from "react-redux";
 import CourseItem from "./CourseItem";
-import { course } from "../../../common/models/db";
-
-const { TreeNode } = Tree;
+import "./index.scss";
 
 interface Props {
   me: Account;
   courses: Course[];
-  setCourses: typeof setCourses;
+  fetchMyCourses: typeof fetchMyCourses;
 }
 
 const Course: FunctionComponent<Props> = ({
   me,
   courses,
   children,
-  setCourses
+  fetchMyCourses
 }) => {
   useTitle("课程管理 | 默识 - 作者端");
 
   useEffect(() => {
-    (async () => {
-      const courses1 = await CourseAPI.myCourses();
-      setCourses(courses1);
-    })();
+    fetchMyCourses(); 
   }, []);
 
   return (
     <Layout>
       <div className="Course">
         <div>
-          <Panel style={{overflow:"auto"}} >
+          <Panel style={{ overflow: "auto" }}>
             <Button
               type="primary"
               onClick={() => {
@@ -79,6 +72,6 @@ export default connect(
     courses: state.courses
   }),
   {
-    setCourses
+    fetchMyCourses
   }
 )(Course);

@@ -1,8 +1,8 @@
 import { Model } from "@/common/kit/type";
-import { application } from "@/common/models/db";
+import { IApplication } from "@/common/models/db";
 import { POST_FORM, Ret } from "../kit/req";
 
-type Application = Model<application, {}>;
+type Application = IApplication;
 export { Application };
 
 export const ApplicationStatus = {

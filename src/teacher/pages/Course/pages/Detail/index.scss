@@ -3,3 +3,12 @@
   flex:1;
   overflow: auto;
 }
+
+.ant-tabs .ant-tabs-top-content.ant-tabs-content-animated, .ant-tabs .ant-tabs-bottom-content.ant-tabs-content-animated{
+  height: calc(100% - 44px);
+}
+
+.TabPanelInner{
+  height: calc(100% - 44px);
+  overflow: auto;
+}

@@ -16,7 +16,7 @@ import BraftEditor from "braft-editor";
 import "github-markdown-css/github-markdown.css";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { addCourse } from "../../../../store/courses/actions";
+import { addCourse } from "@/teacher/store/courses/actions";
 import "./index.scss";
 import { Control } from 'react-keeper';
 
