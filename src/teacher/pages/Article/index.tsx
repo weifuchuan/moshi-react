@@ -1,12 +1,16 @@
 import useTitle from "@/common/hooks/useTitle";
-import { Account } from "@/common/models/account";
-import { Course } from "@/common/models/course";
+import { IAccount } from "@/common/models/Account";
+import { ICourse } from "@/common/models/Course";
 import Layout from "@/teacher/layouts/Layout";
-import { State } from "@/teacher/store/state_type";
-import React, { FunctionComponent, useEffect, useState, useRef } from "react";
-import { connect } from "react-redux";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  useRef,
+  useContext
+} from "react";
 import "./index.scss";
-import { Article } from "@/common/models/article";
+import { IArticle, ArticleComment } from "@/common/models/Article";
 import {
   Skeleton,
   message,
@@ -16,67 +20,72 @@ import {
   Popconfirm,
   Avatar
 } from "antd";
-import { fetchArticle, commentArticle } from "@/teacher/store/articles/actions";
 import Panel from "@/common/components/Panel";
-import { ArticleComment } from "@/common/models/article_comment";
 import RichEditor from "@/common/components/RichEditor";
 import BraftEditor, { EditorState } from "braft-editor";
 import { PopCommentEditor } from "@/common/components/CommentEditor";
-import { ArticleCommentStatus } from "@/common/models/article_comment";
 import MarkdownDiv from "@/common/components/MarkdownDiv";
 import DefaultAvatar from "@/common/components/DefaultAvatar";
 import { fromNow } from "@/common/kit/functions";
 import { Link } from "react-keeper";
-import {
-  removeComment,
-  updateCommentStatus
-} from "@/teacher/store/articleComments/actions";
 import Expandable from "@/common/components/Expandable";
+import { StoreContext } from "@/teacher/store";
+import { observer } from "mobx-react-lite";
+import ArticleModel from "@/common/models/Article";
 
 interface Props {
   params: {
     id: string;
   };
-  me: Account;
-  courses: Course[];
-  articles: Article[];
-  fetchArticle: typeof fetchArticle;
-  commentArticle: typeof commentArticle;
-  articleComments: ArticleComment[];
-  removeComment: typeof removeComment;
-  updateCommentStatus: typeof updateCommentStatus;
 }
 
-const Article: FunctionComponent<Props> = ({
-  params,
-  me,
-  courses,
-  articles,
-  children,
-  fetchArticle,
-  articleComments,
-  commentArticle,
-  removeComment,
-  updateCommentStatus
-}) => {
+const Article: FunctionComponent<Props> = ({ params }) => {
+  const store = useContext(StoreContext);
+  const articles = store.articles;
   const id = Number.parseInt(params.id);
-  const article = articles.find(a => a.id === id);
-  const replies = articleComments
-    .filter(c => c.articleId === id && !!c.replyTo)
+  const article = articles.find(a => a.id === id)!; // TODO: article not exists in local
+
+  useEffect(() => {
+    (async () => {
+      if (!article) {
+        const article = await ArticleModel.fetch(id);
+        store.articles.push(article);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (article && article.comments.length === 0) {
+      article.fetchComments();
+    }
+  }, [article]);
+
+  const editor = useRef<BraftEditor>(null);
+
+  useTitle(`${article ? article.title : "文章"} | 默识 - 作者端`);
+
+  // const [content, setContent] = useState("");
+
+  if (!article) {
+    return <Skeleton active />;
+  }
+
+  const replies = article.comments
+    .filter(c => !!c.replyTo)
     .reduce((map, c) => ((map[c.replyTo!] = c), map), {} as {
       [replyTo: number]: ArticleComment;
     });
-  const comments = articleComments
-    .filter(c => c.articleId === id && !!!c.replyTo)
+  const comments = article.comments
+    .filter(c => !!!c.replyTo)
     .sort((a, b) => {
       if (
-        a.status === ArticleCommentStatus.STATUS_TOP &&
-        b.status === ArticleCommentStatus.STATUS_ORDINARY
+        a.status === ArticleComment.STATUS.TOP &&
+        b.status === ArticleComment.STATUS.ORDINARY
       ) {
         return -1;
       } else if (
-        a.status === ArticleCommentStatus.STATUS_ORDINARY &&
-        b.status === ArticleCommentStatus.STATUS_TOP
+        a.status === ArticleComment.STATUS.ORDINARY &&
+        b.status === ArticleComment.STATUS.TOP
       ) {
         return 1;
       }
@@ -94,29 +103,6 @@ const Article: FunctionComponent<Props> = ({
       comments.splice(i + 1, 0, replies[c.id]);
     }
   }
-  const [art, setArt] = useState({
-    id,
-    title: "",
-    content: ""
-  } as Article);
-  const [assigned, setAssigned] = useState(false);
-  useEffect(() => {
-    fetchArticle(id, msg => message.error(msg));
-  }, []);
-  const editor = useRef<BraftEditor>(null);
-
-  useTitle(`${article ? article.title : "文章"} | 默识 - 作者端`);
-
-  // const [content, setContent] = useState("");
-
-  if (!article) {
-    return <Skeleton active />;
-  } else {
-    if (!assigned) {
-      Object.assign(art, article);
-      setAssigned(true);
-    }
-  }
 
   return (
     <Layout>
@@ -125,12 +111,12 @@ const Article: FunctionComponent<Props> = ({
           <Panel style={{ flexBasis: "70vw", height: "fit-content" }}>
             <div>
               <Input
-                defaultValue={art.title}
-                onChange={e => setArt({ ...art, title: e.target.value })}
+                defaultValue={article.title}
+                onChange={e => (article.title = e.target.value)}
                 style={{ marginBottom: "1em" }}
               />
               <RichEditor
-                defaultValue={BraftEditor.createEditorState(art.content)}
+                defaultValue={BraftEditor.createEditorState(article.content)}
                 style={{ marginBottom: "1em", height: "auto" }}
                 editorRef={editor}
               />
@@ -149,8 +135,8 @@ const Article: FunctionComponent<Props> = ({
                   <PopCommentEditor
                     buttonProps={{ children: "评论", type: "primary" }}
                     initContent={""}
-                    onOk={content => {
-                      commentArticle(article.id, content);
+                    onOk={async content => {
+                      await article.comment(store.me!, content);
                     }}
                   />
                 </div>
@@ -167,37 +153,37 @@ const Article: FunctionComponent<Props> = ({
                           }}
                           okText={"回复"}
                           initContent={""}
-                          onOk={content => {
-                            commentArticle(article.id, content, comment.id);
+                          onOk={async content => {
+                            await article.comment(
+                              store.me!,
+                              content,
+                              comment.id
+                            );
                           }}
                         />,
                         <Button
                           className={"action"}
                           onClick={() => {
-                            updateCommentStatus(
-                              comment.id,
-                              comment.status ===
-                                ArticleCommentStatus.STATUS_ORDINARY
-                                ? ArticleCommentStatus.STATUS_TOP
-                                : ArticleCommentStatus.STATUS_ORDINARY,
-                              article.id
+                            comment.updateStatus(
+                              comment.status === ArticleComment.STATUS.ORDINARY
+                                ? ArticleComment.STATUS.TOP
+                                : ArticleComment.STATUS.ORDINARY
                             );
                           }}
                         >
-                          {comment.status ===
-                          ArticleCommentStatus.STATUS_ORDINARY
+                          {comment.status === ArticleComment.STATUS.ORDINARY
                             ? "置顶"
                             : "取消置顶"}
                         </Button>,
                         <Popconfirm
                           title="确认删除此评论?"
-                          onConfirm={() => {
-                            removeComment(
-                              comment.id,
-                              article.id,
-                              () => message.success("删除成功"),
-                              message.error
-                            );
+                          onConfirm={async () => {
+                            try {
+                              await article.removeComment(comment.id);
+                              message.success("删除成功");
+                            } catch (err) {
+                              message.error(err);
+                            }
                           }}
                           onCancel={() => {}}
                           okText="Yes"
@@ -234,13 +220,13 @@ const Article: FunctionComponent<Props> = ({
                       actions={[
                         <Popconfirm
                           title="确认删除此评论?"
-                          onConfirm={() => {
-                            removeComment(
-                              comment.id,
-                              article.id,
-                              () => message.success("删除成功"),
-                              message.error
-                            );
+                          onConfirm={async () => {
+                            try {
+                              await article.removeComment(comment.id);
+                              message.success("删除成功");
+                            } catch (err) {
+                              message.error(err);
+                            }
                           }}
                           onCancel={() => {}}
                           okText="Yes"
@@ -276,17 +262,4 @@ const Article: FunctionComponent<Props> = ({
   );
 };
 
-export default connect(
-  (state: State) => ({
-    me: state.me!,
-    courses: state.courses,
-    articles: state.articles,
-    articleComments: state.articleComments
-  }),
-  {
-    fetchArticle,
-    commentArticle,
-    removeComment,
-    updateCommentStatus
-  }
-)(Article);
+export default observer(Article);

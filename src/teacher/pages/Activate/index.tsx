@@ -1,37 +1,33 @@
-import React from 'react';
-import Layout from '@/teacher/layouts/Layout';
-import { Control } from 'react-keeper';
-import './index.scss';
-import useTitle from '@/common/hooks/useTitle';
-import { connect } from 'react-redux';
-import { activate } from '@/teacher/store/me/actions';
-import { Account, AccountAPI } from '@/common/models/account';
-import { State } from '@/teacher/store/state_type';
-import ActivatePanel from '@/common/components/ActivatePanel';
-import { message } from 'antd';
+import React, { useContext } from "react";
+import Layout from "@/teacher/layouts/Layout";
+import { Control } from "react-keeper";
+import "./index.scss";
+import useTitle from "@/common/hooks/useTitle";
+import { IAccount, AccountAPI } from "@/common/models/Account";
+import ActivatePanel from "@/common/components/ActivatePanel";
+import { message } from "antd";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/teacher/store";
+import Account from "@/common/models/Account";
 
-interface Props {
-  me: Account;
-  activate: typeof activate;
-}
-
-function Activate({ me }: Props) {
-  useTitle('激活 | 默识 - 作者端');
-
+function Activate() {
+  useTitle("激活 | 默识 - 作者端");
+  const store = useContext(StoreContext);
+  const me = store.me!;
   return (
     <Layout>
       <div className="Activate">
         <ActivatePanel
           email={me.email}
           resend={AccountAPI.reSendActivateEmail}
-          confirm={async (code) => {
+          confirm={async code => {
             let ret = await AccountAPI.activate(code);
-            if (ret.state === 'ok') {
-              message.success('激活成功');
-              activate();
-              Control.go('/');
+            if (ret.state === "ok") {
+              message.success("激活成功");
+              me.status = Account.STATUS.LEARNER;
+              Control.go("/");
             } else {
-              message.error('激活失败');
+              message.error("激活失败");
             }
           }}
         />
@@ -40,9 +36,4 @@ function Activate({ me }: Props) {
   );
 }
 
-export default connect(
-  (state: State) => ({
-    me: state.me!
-  }),
-  { activate }
-)(Activate);
+export default observer(Activate);

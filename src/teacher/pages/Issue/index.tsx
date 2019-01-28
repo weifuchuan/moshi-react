@@ -1,85 +1,60 @@
 import useTitle from "@/common/hooks/useTitle";
-import { Account } from "@/common/models/account";
+import { IAccount } from "@/common/models/Account";
 import Layout from "@/teacher/layouts/Layout";
-import { State } from "@/teacher/store/state_type";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  useContext
+} from "react";
 import "./index.scss";
-import { Course } from "@/common/models/course";
+import { ICourse } from "@/common/models/Course";
 import Panel from "@/common/components/Panel";
 import { Tree, Button, Skeleton } from "antd";
 import { Control } from "react-keeper";
-import { Issue, IssueComment } from "@/common/models/issue";
+import { IIssue, IIssueComment, IssueComment } from "@/common/models/Issue";
 import IssuePanel from "@/common/components/IssuePanel";
-import { enterIssuePage } from "@/teacher/store/issues/actions";
 import { select } from "@/common/kit/req";
-import {
-  commentIssue,
-  issueCommentPage
-} from "@/teacher/store/issueComments/actions";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/teacher/store";
+import IssueModel from "@/common/models/Issue";
 
 const { TreeNode } = Tree;
 
 interface Props {
   params: { id: string };
-  me: Account;
-  courses: Course[];
-  issues: Issue[];
-  issueComments: IssueComment[];
-  enterIssuePage: typeof enterIssuePage;
-  commentIssue: typeof commentIssue;
-  issueCommentPage: typeof issueCommentPage;
 }
 
-const Issue: FunctionComponent<Props> = ({
-  params,
-  me,
-  courses,
-  issues,
-  issueComments,
-  children,
-  enterIssuePage,
-  commentIssue,
-  issueCommentPage
-}) => {
-  useTitle("Issue | 默识 - 作者端");
+const Issue: FunctionComponent<Props> = ({ params, children }) => {
+  useTitle("IIssue | 默识 - 作者端");
+
+  const store = useContext(StoreContext);
+
+  const me = store.me!;
+  const issues = store.issues;
 
   const id = Number.parseInt(params.id);
   const issue = issues.find(issue => issue.id === id)!;
 
+  const [pageNumber, setPageNumber] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  const [pageNumber, setPageNumber] = useState(1);
-
   useEffect(() => {
-    enterIssuePage(id);
-
     (async () => {
-      const [{ count }] = await select<{ count: number }>(
-        "/select",
-        "select count(*) count from issue_comment_l where issueId = ?",
-        id
-      );
-      setTotalCount(count);
+      if (!issue) {
+        const issue = await IssueModel.fetchIssue(id);
+        store.issues.push(issue);
+        setTotalCount(await issue.getTotalCommentCount())
+      } else if (issue.comments.length === 0) {
+        issue.getPage(1);
+        setTotalCount(await issue.getTotalCommentCount());
+      }
     })();
   }, []);
 
   if (!issue) {
     return <Skeleton active />;
   }
-
-  const comments = issueComments
-    .filter(c => (c.issueId = issue.id))
-    .sort((a, b) => {
-      if (a.createAt < b.createAt) {
-        return -1;
-      } else if (a.createAt === b.createAt) {
-        return 0;
-      } else {
-        return 1;
-      }
-    })
-    .slice((pageNumber - 1) * 10, pageNumber * 10);
 
   return (
     <Layout>
@@ -88,21 +63,15 @@ const Issue: FunctionComponent<Props> = ({
           <IssuePanel
             me={me}
             issue={issue}
-            comments={comments}
+            comments={issue.comments.slice()}
             onClickNewIssue={() => {}}
             onClickAccount={account => {}}
             totalCount={totalCount}
-            onComment={content => {
-              commentIssue(issue.id, content);
+            onComment={async content => {
+              await issue.comment(content, me);
             }}
             onChangePage={pageNumber => {
-              if (pageNumber * 10 < comments.length) {
-                setPageNumber(pageNumber);
-              } else {
-                issueCommentPage(issue.id, pageNumber, () =>
-                  setPageNumber(pageNumber)
-                );
-              }
+              issue.getPage(pageNumber);
             }}
           />
         </div>
@@ -111,16 +80,4 @@ const Issue: FunctionComponent<Props> = ({
   );
 };
 
-export default connect(
-  (state: State) => ({
-    me: state.me!,
-    courses: state.courses,
-    issues: state.issues,
-    issueComments: state.issueComments
-  }),
-  {
-    enterIssuePage,
-    commentIssue,
-    issueCommentPage
-  }
-)(Issue);
+export default observer(Issue);

@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react'
 import "./index.scss" 
-import Panel from '@/common/components/Panel';
-import { connect } from 'react-redux';
+import Panel from '@/common/components/Panel'; 
 import RichEditor from '@/common/components/RichEditor';
+import { observer } from 'mobx-react-lite';
 
 interface Props{
   params: {
@@ -21,4 +21,4 @@ const EditIntro:FunctionComponent<Props> = ({})=>{
   </Panel>
 };
 
-export default connect()(EditIntro); 
+export default observer(EditIntro); 

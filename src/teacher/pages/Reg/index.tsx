@@ -1,30 +1,32 @@
-import React from "react";
+import React, { useContext } from "react";
 import Layout from "@/teacher/layouts/Layout";
 import { Control } from "react-keeper";
 import RegPanel from "@/common/components/RegPanel";
 import "./index.scss";
 import useTitle from "@/common/hooks/useTitle";
-import { connect } from "react-redux";
-import { setMe } from "@/teacher/store/me/actions";
-import { AccountAPI } from "@/common/models/account";
+import Account, { AccountAPI } from "@/common/models/Account";
 import { message } from "antd";
 import { fetchBase64Image } from "@/common/kit/req";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/teacher/store";
 
-interface Props {
-  setMe: typeof setMe;
-}
-
-function Reg({ setMe }: Props) {
+function Reg() {
   useTitle("注册 | 默识 - 作者端");
-
+  const store = useContext(StoreContext);
   return (
     <Layout>
       <div className="Reg">
         <RegPanel
           onReg={async ({ email, password, nickName, captcha }) => {
             try {
-              const account = await AccountAPI.reg(email, nickName, password, captcha);
-              setMe(account);
+              const account = await Account.reg(
+                email,
+                nickName,
+                password,
+                captcha
+              );
+              store.me = account;
+              Control.go("/");
             } catch (error) {
               message.error(error);
             }
@@ -37,7 +39,4 @@ function Reg({ setMe }: Props) {
   );
 }
 
-export default connect(
-  null,
-  { setMe }
-)(Reg);
+export default observer(Reg);

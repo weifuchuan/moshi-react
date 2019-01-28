@@ -7,26 +7,27 @@ import {
   buildUnlockFilter,
   buildUnloggedFilter
 } from "@/common/kit/filters";
-import { Account, AccountStatus, AccountAPI } from "@/common/models/account";
+import Account, {
+  IAccount,
+  AccountStatus,
+  AccountAPI
+} from "@/common/models/Account";
 import { message } from "antd";
 import * as React from "react";
 import { Control, HashRouter, Route } from "react-keeper";
-import { connect } from "react-redux";
 import "./App.scss";
-import { setMe, probeLogin } from "./store/me/actions";
-import { State } from "./store/state_type";
 import LoadingRoute from "@/common/components/LoadingRoute";
-import { CourseStatus, Course } from "@/common/models/course";
+import { CourseStatus, ICourse } from "@/common/models/Course";
+import store from "./store";
+import { computed } from "mobx";
 
 const Router = HashRouter;
 
-class App extends React.Component<{
-  logged: boolean;
-  probeLogin: typeof probeLogin;
-  me: Account | null;
-  courses: Course[];
-}> {
+class App extends React.Component<{}> {
   probingStatus: "start" | "doing" | "end" = "start";
+  @computed get logged() {
+    return !!store.me;
+  }
 
   render() {
     return (
@@ -59,11 +60,11 @@ class App extends React.Component<{
               imported={import("./pages/Course/pages/ApplyCourse")}
               enterFilter={[
                 cb => {
-                  const { courses } = this.props;
+                  const { courses } = store;
                   if (
                     courses.length !== 0 &&
                     courses.findIndex(
-                      (course: Course) =>
+                      (course: ICourse) =>
                         course.status === CourseStatus.STATUS_INIT
                     ) !== -1
                   ) {
@@ -76,7 +77,7 @@ class App extends React.Component<{
             />
             <LoadingRoute
               path={"/detail/:id"}
-              imported={import("./pages/Course/pages/Detail")}              
+              imported={import("./pages/Course/pages/Detail")}
             />
             <LoadingRoute
               path={"/edit-intro/:id"}
@@ -144,16 +145,16 @@ class App extends React.Component<{
 
   private unloggedFilter = buildUnloggedFilter(this);
 
-  private lockFilter = buildLockFilter(this);
+  private lockFilter = buildLockFilter({ props: store });
 
-  private unlockFilter = buildUnlockFilter(this);
+  private unlockFilter = buildUnlockFilter({ props: store });
 
-  private activatedFilter = buildActivatedFilter(this);
+  private activatedFilter = buildActivatedFilter({ props: store });
 
-  private unactivatedFilter = buildUnactivatedFilter(this);
+  private unactivatedFilter = buildUnactivatedFilter({ props: store });
 
   private isTeacherFilter = buildRoleFilter(
-    this,
+    { props: store },
     AccountStatus.isTeacher,
     () => {
       message.error("无教师权限");
@@ -162,7 +163,7 @@ class App extends React.Component<{
   );
 
   private isNotTeacherFilter = buildRoleFilter(
-    this,
+    { props: store },
     account => !AccountStatus.isTeacher(account),
     () => {
       message.info("已有教师权限");
@@ -177,26 +178,14 @@ class App extends React.Component<{
     (async () => {
       if (this.probingStatus === "start") {
         this.probingStatus = "doing";
-        this.props.probeLogin(() => (this.probingStatus = "end"));
-        // try {
-        //   const account = await AccountAPI.probeLoggedAccount();
-        //   this.props.setMe(account);
-        // } catch (err) {}
-        // this.probingStatus = "end";
+        try {
+          const account = await Account.probeLoggedAccount();
+          store.me = account;
+        } catch (err) {}
+        this.probingStatus = "end";
       }
     })();
   }
 }
 
-const ConnectedApp = connect(
-  (state: State) => {
-    return {
-      logged: !!state.me,
-      me: state.me,
-      courses: state.courses
-    };
-  },
-  { probeLogin }
-)(App);
-
-export default ConnectedApp;
+export default App;

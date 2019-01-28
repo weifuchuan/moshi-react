@@ -1,23 +1,19 @@
 import Panel from "@/common/components/Panel";
 import { formatTime } from "@/common/kit/functions";
-import { Account } from "@/common/models/account";
-import { Article, ArticleStatus } from "@/common/models/article";
-import { Course, CourseStatus } from "@/common/models/course";
-import { State } from "@/teacher/store/state_type";
+import { IAccount } from "@/common/models/Account";
+import Article, { IArticle } from "@/common/models/Article";
+import Course, { ICourse, CourseStatus } from "@/common/models/Course";
 import { Button, List, Skeleton, Tabs, Popconfirm, message } from "antd";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, Control } from "react-keeper";
-import { connect } from "react-redux";
-import {
-  fetchCourseDetail,
-  updateCourse
-} from "@/teacher/store/courses/actions";
 import "./index.scss";
 import RichEditor from "@/common/components/RichEditor";
 import BraftEditor from "braft-editor";
 import IssueList from "@/common/components/IssueList";
-import issues from "../../../../store/issues/reducers";
-import { Issue } from "@/common/models/issue";
+import { IIssue } from "@/common/models/Issue";
+import useTitle from "@/common/hooks/useTitle";
+import { StoreContext } from "@/teacher/store";
+import { observer } from "mobx-react-lite";
 
 const TabPane = Tabs.TabPane;
 
@@ -25,26 +21,40 @@ interface Props {
   params: {
     id: string;
   };
-  courses: Course[];
-  me: Account;
-  articles: Article[];
-  issues: Issue[];
-  fetchCourseDetail: typeof fetchCourseDetail;
-  updateCourse: typeof updateCourse;
 }
 
-function Detail({
-  params,
-  courses,
-  issues,
-  me,
-  articles,
-  fetchCourseDetail,
-  updateCourse
-}: Props) {
+function Detail({ params }: Props) {
+  const store = useContext(StoreContext);
+  const courses = store.courses;
   const id = Number.parseInt(params.id.trim());
   const course = courses.find(c => c.id === id)!; // TODO: handle course not exists
-  issues = issues.filter(issue => issue.courseId === course.id);
+  const issues = store.issues;
+  const articles = store.articles;
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (course) {
+      course.detailed().then(({ issues, articles }) => {
+        store.issues = issues;
+        store.articles = articles;
+        setLoading(false);
+      });
+    }
+  }, [course]);
+
+  const [introEditing, setIntroEditing] = useState(false);
+
+  const introEditor = useRef<BraftEditor>(null);
+
+  if (loading) {
+    return (
+      <Panel className={"Detail"}>
+        <Skeleton active />
+      </Panel>
+    );
+  }
+
   let status = null;
   if (!course) {
     status = "课程不存在";
@@ -70,28 +80,6 @@ function Detail({
     // );
   }
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (course) {
-      fetchCourseDetail(course.id, () => {
-        setLoading(false);
-      });
-    }
-  }, [course]);
-
-  const [introEditing, setIntroEditing] = useState(false);
-
-  const introEditor = useRef<BraftEditor>(null);
-
-  if (loading) {
-    return (
-      <Panel className={"Detail"}>
-        <Skeleton active />
-      </Panel>
-    );
-  }
-
   return (
     <Panel className={"Detail"}>
       {status}
@@ -105,7 +93,7 @@ function Detail({
               dataSource={articles.filter(
                 article => article.courseId === course!.id
               )}
-              renderItem={(article: Article) => {
+              renderItem={(article: IArticle) => {
                 return (
                   <List.Item>
                     <List.Item.Meta
@@ -115,13 +103,13 @@ function Detail({
                         </Link>
                       }
                       description={`状态：${
-                        article.status === ArticleStatus.STATUS_INIT
+                        article.status === Article.STATUS.INIT
                           ? "编辑中"
-                          : article.status === ArticleStatus.STATUS_PUBLISH
+                          : article.status === Article.STATUS.PUBLISH
                           ? "已发布"
                           : "已锁定"
                       }；创建于：${formatTime(article.createAt)}${
-                        article.status === ArticleStatus.STATUS_PUBLISH
+                        article.status === Article.STATUS.PUBLISH
                           ? `；发布于：${formatTime(article.publishAt!)}`
                           : ""
                       }`}
@@ -135,18 +123,15 @@ function Detail({
             <Popconfirm
               placement="bottomRight"
               title={introEditing ? "确定保存修改么？" : "建议使用全屏模式编辑"}
-              onConfirm={() => {
+              onConfirm={async () => {
                 if (introEditing) {
-                  updateCourse(
-                    course.id,
-                    {
+                  try {
+                    await course.update({
                       introduce: introEditor.current!.getValue().toHTML()
-                    },
-                    () => {},
-                    (msg: string) => {
-                      message.error(msg);
-                    }
-                  );
+                    });
+                  } catch (err) {
+                    message.error(err.toString());
+                  }
                 }
                 setIntroEditing(!introEditing);
               }}
@@ -182,8 +167,7 @@ function Detail({
             <IssueList
               className={"TabPanelInner"}
               issues={issues}
-              paginationProps={{
-              }}
+              paginationProps={{}}
               linkTo={issue => `/issue/${issue.id}`}
             />
           </TabPane>
@@ -193,12 +177,4 @@ function Detail({
   );
 }
 
-export default connect(
-  (state: State) => ({
-    courses: state.courses,
-    me: state.me!,
-    articles: state.articles,
-    issues: state.issues
-  }),
-  { fetchCourseDetail, updateCourse }
-)(Detail);
+export default observer(Detail);

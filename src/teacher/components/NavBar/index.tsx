@@ -1,20 +1,22 @@
 import React from "react";
 import "./index.scss";
-import { Button,  Popover } from "antd";
-import { Account } from "@/common/models/account";
-import { connect } from "react-redux";
-import { State } from "@/teacher/store/state_type";
+import { Button, Popover } from "antd"; 
 import { GET } from "@/common/kit/req";
 import { Control } from "react-keeper";
-import DefaultAvatar from "@/common/components/DefaultAvatar"; 
+import DefaultAvatar from "@/common/components/DefaultAvatar";
+import { observer } from "mobx-react-lite";
+import { useContext} from "react";
+import { StoreContext } from "@/teacher/store";
 
 interface Props {
-  me: Account | null;
   toLogin: () => void;
   toReg: () => void;
 }
 
-function NavBar({ me, toLogin, toReg }: Props) {
+function NavBar({ toLogin, toReg }: Props) {
+  const store = useContext(StoreContext);
+  const me = store.me;
+
   return (
     <div className="NavBar">
       <div>
@@ -61,4 +63,4 @@ function NavBar({ me, toLogin, toReg }: Props) {
   );
 }
 
-export default connect((state: State) => ({ me: state.me }))(NavBar);
+export default observer(NavBar);

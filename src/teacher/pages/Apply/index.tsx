@@ -1,38 +1,30 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import './index.scss';
-import Layout from '@/teacher/layouts/Layout';
-import useTitle from '@/common/hooks/useTitle';
-import { packToClassComponent, markdownToHtml } from '@/common/kit/functions';
-import { GET, Ret, select } from '@/common/kit/req';
-import { Account } from '@/common/models/account';
-import { connect } from 'react-redux';
-import { State } from '@/teacher/store/state_type';
-import { Skeleton, Input, Alert, Button, message } from 'antd';
 import Panel from '@/common/components/Panel';
-import 'github-markdown-css/github-markdown.css';
-import {
-  Application,
-  ApplicationStatus,
-  ApplicationAPI
-} from '@/common/models/application';
-import Editor from 'for-editor';
-import { ApplicationCategory } from '@/common/models/application';
-import BraftEditor from 'braft-editor';
-import { EditorState } from 'braft-editor';
 import RichEditor from '@/common/components/RichEditor';
+import useTitle from '@/common/hooks/useTitle';
+import { select } from '@/common/kit/req';
+import { IAccount } from '@/common/models/Account';
+import { ApplicationAPI, ApplicationCategory, ApplicationStatus, IApplication } from '@/common/models/Application';
+import Layout from '@/teacher/layouts/Layout';
+import { Alert, Button, Input, message, Skeleton } from 'antd';
+import BraftEditor, { EditorState } from 'braft-editor';
+import 'github-markdown-css/github-markdown.css';
+import React, { useEffect, useRef, useState, useContext } from 'react';
+import './index.scss';
+import { StoreContext } from '@/teacher/store';
+import { observer } from 'mobx-react-lite';
+ 
 
-interface Props {
-  me: Account;
-}
-
-function Apply({ me }: Props) {
+function Apply( ) {
   useTitle('申请 | 默识 - 作者端');
+
+  const store=useContext(StoreContext)
+  const me=store.me!;
   
   const [ rawContent, setRawContent ] = useState<EditorState>(
     BraftEditor.createEditorState(null)
   );
   const richEditor = useRef<BraftEditor>(null);
-  const [ application, setApplication ] = useState<Application>(({
+  const [ application, setApplication ] = useState<IApplication>(({
     id: 0,
     accountId: me.id,
     category: 0,
@@ -40,7 +32,7 @@ function Apply({ me }: Props) {
     content: '',
     createAt: 0,
     status: ApplicationStatus.STATUS_COMMIT
-  } as Partial<Application>) as Application);
+  } as Partial<IApplication>) as IApplication);
   const [ applicationLoading, setApplicationLoading ] = useState(true);
   const [ descriptionLoading, setDescriptionLoading ] = useState(true);
   const [ description, setDescription ] = useState('');
@@ -65,7 +57,7 @@ function Apply({ me }: Props) {
       )!.value;
       if (applications.length > 0) {
         setApplication(applications[0]);        
-        const ap: Application = applications[0];      
+        const ap: IApplication = applications[0];
         setRawContent(BraftEditor.createEditorState(ap.content)); 
         if (ap.status === ApplicationStatus.STATUS_COMMIT) {
           setDisabled(true);
@@ -141,14 +133,6 @@ function Apply({ me }: Props) {
                     editorRef={richEditor}     
                   />
                 </div>
-                {/* <Editor
-                value={application.content}
-                onChange={(value) =>
-                  setApplication({ ...application, content: value })}
-                onSave={(value) =>
-                  setApplication({ ...application, content: value })}
-                height=""
-              /> */}
                 <Button
                   style={{ marginTop: '1em' }}
                   onClick={async () => {
@@ -189,4 +173,4 @@ function Apply({ me }: Props) {
   );
 }
 
-export default connect((state: State) => ({ me: state.me! }))(Apply);
+export default observer(Apply);

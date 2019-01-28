@@ -1,33 +1,29 @@
 import Panel from "@/common/components/Panel";
 import useTitle from "@/common/hooks/useTitle";
-import { Account } from "@/common/models/account";
-import { Course, CourseStatus } from "@/common/models/course";
+import { IAccount } from "@/common/models/Account";
+import CourseModel, { CourseStatus } from "@/common/models/Course";
 import Layout from "@/teacher/layouts/Layout";
-import { fetchMyCourses } from "@/teacher/store/courses/actions";
-import { State } from "@/teacher/store/state_type";
 import { Button } from "antd";
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect, useContext } from "react";
 import { Control } from "react-keeper";
-import { connect } from "react-redux";
 import CourseItem from "./CourseItem";
 import "./index.scss";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/teacher/store";
 
-interface Props {
-  me: Account;
-  courses: Course[];
-  fetchMyCourses: typeof fetchMyCourses;
-}
+interface Props {}
 
-const Course: FunctionComponent<Props> = ({
-  me,
-  courses,
-  children,
-  fetchMyCourses
-}) => {
+const Course: FunctionComponent<Props> = ({ children }) => {
   useTitle("课程管理 | 默识 - 作者端");
 
+  const store = useContext(StoreContext);
+
+  const courses = store.courses;
+
   useEffect(() => {
-    fetchMyCourses(); 
+    (async () => {
+      store.courses = await CourseModel.myCourses();
+    })();
   }, []);
 
   return (
@@ -66,12 +62,4 @@ const Course: FunctionComponent<Props> = ({
   );
 };
 
-export default connect(
-  (state: State) => ({
-    me: state.me!,
-    courses: state.courses
-  }),
-  {
-    fetchMyCourses
-  }
-)(Course);
+export default observer(Course);

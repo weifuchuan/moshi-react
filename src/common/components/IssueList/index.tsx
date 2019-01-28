@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import "./index.scss";
-import { Issue, IssueStatus } from "@/common/models/issue";
+import { IIssue, IssueStatus } from "@/common/models/Issue";
 import { List, Button, Avatar } from "antd";
 import { PaginationProps } from "antd/lib/pagination";
 import { Link, Control } from "react-keeper";
 import { fromNow } from "@/common/kit/functions";
 
 interface Props {
-  issues: Issue[];
+  issues: IIssue[];
   paginationProps: PaginationProps;
-  linkTo: (issue: Issue) => string;
+  linkTo: (issue: IIssue) => string;
   className?: string;
 }
 
@@ -51,7 +51,7 @@ export default function IssueList({
         </div>
       }
       dataSource={issues.filter(issue => issue.status === status)}
-      renderItem={(issue: Issue) => {
+      renderItem={(issue: IIssue) => {
         return (
           <List.Item
             actions={

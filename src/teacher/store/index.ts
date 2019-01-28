@@ -1,24 +1,19 @@
-import { createStore, applyMiddleware, combineReducers, compose } from "redux";
-import createSagaMiddleware from "redux-saga";
-import rootSagas from "./rootSagas";
-import me from "./me/reducers";
-import { State } from "./state_type";
-import courses from "./courses/reducers";
-import articles from './articles/reducers';
-import issues from './issues/reducers';
-import { articleComments } from './articleComments/reducers';
-import { issueComments } from './issueComments/reducers';
+import { observable } from "mobx";
+import Account from "@/common/models/Account";
+import Course from "@/common/models/Course";
+import React from "react";
+import Article from "@/common/models/Article";
+import Issue from "@/common/models/Issue";
 
-const sagaMiddleware = createSagaMiddleware();
+export class Store {
+  @observable me: Account | null = null;
+  @observable courses: Course[] = [];
+  @observable articles: Article[] = [];
+  @observable issues: Issue[] = [];
+}
 
-const composeEnhancers =
-  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = new Store();
 
-const store = createStore(
-  combineReducers<State>({ me, courses, articles,issues,articleComments,issueComments }),
-  composeEnhancers(applyMiddleware(sagaMiddleware))
-);
-
-sagaMiddleware.run(rootSagas);
+export const StoreContext = React.createContext(store);
 
 export default store;

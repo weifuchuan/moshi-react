@@ -1,23 +1,23 @@
 import React, { useRef } from "react";
 import "./index.scss";
-import { Issue, IssueComment } from "@/common/models/issue";
+import { IIssue, IIssueComment } from "@/common/models/Issue";
 import { Button, Icon, List } from "antd";
 import { fromNow } from "@/common/kit/functions";
 import CommentItem from "./CommentItem";
-import { Account } from "@/common/models/account";
+import { IAccount } from "@/common/models/Account";
 import { CommentEditor } from "../CommentEditor";
 import DefaultAvatar from "../DefaultAvatar";
 import ReactDOM from "react-dom";
 
 interface Props {
-  me: Account;
-  issue: Issue;
-  comments: IssueComment[];
+  me: IAccount;
+  issue: IIssue;
+  comments: IIssueComment[];
   totalCount: number;
   onClickNewIssue: () => void;
   onClickAccount: (id: number) => void;
-  onComment: (content: string) => void;
-  onChangePage:(pageNumber:number)=>void; 
+  onComment: (content: string) => Promise<void>;
+  onChangePage: (pageNumber: number) => void;
 }
 
 export default function IssuePanel({
@@ -68,7 +68,7 @@ export default function IssuePanel({
         <div className={"Timeline"}>
           <List
             dataSource={comments}
-            renderItem={(comment: IssueComment) => (
+            renderItem={(comment: IIssueComment) => (
               <List.Item>
                 <CommentItem
                   comment={comment}
@@ -79,7 +79,7 @@ export default function IssuePanel({
                         .split("\n")
                         .map(l => "> " + l)
                         .reduce((prev, curr) => prev + "\n" + curr, "")
-                        .slice(1)
+                        .slice(1) + "\n\n"
                     );
                     window.scrollTo({ top: window.innerHeight });
                   }}
@@ -93,7 +93,7 @@ export default function IssuePanel({
                   pagination: {
                     total: totalCount,
                     pageSize: 10,
-                    onChange:onChangePage,                    
+                    onChange: onChangePage
                   }
                 })}
           />
@@ -102,7 +102,13 @@ export default function IssuePanel({
       </div>
       <div className={"NewComment"}>
         <DefaultAvatar avatar={me.avatar} size={44} />
-        <CommentEditor ref={editor} onComment={onComment} />
+        <CommentEditor
+          ref={editor}
+          onComment={async content => {
+            await onComment(content);
+            editor.current!.setContent("");
+          }}
+        />
       </div>
     </div>
   );

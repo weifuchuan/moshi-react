@@ -2,34 +2,37 @@ import Panel from "@/common/components/Panel";
 import RichEditor from "@/common/components/RichEditor";
 import useTitle from "@/common/hooks/useTitle";
 import { select } from "@/common/kit/req";
-import { Account } from "@/common/models/account";
-import { Application, ApplicationStatus } from "@/common/models/application";
-import {
-  Course,
+import { IAccount } from "@/common/models/Account";
+import { IApplication, ApplicationStatus } from "@/common/models/Application";
+import Course, {
+  ICourse,
   CourseAPI,
   CourseStatus,
   CourseType
-} from "@/common/models/course";
-import { State } from "@/teacher/store/state_type";
+} from "@/common/models/Course";
 import { Button, Input, message, Select } from "antd";
 import BraftEditor from "braft-editor";
 import "github-markdown-css/github-markdown.css";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { addCourse } from "@/teacher/store/courses/actions";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  useContext
+} from "react";
 import "./index.scss";
-import { Control } from 'react-keeper';
+import { Control } from "react-keeper";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/teacher/store";
 
 const Option = Select.Option;
 
-interface Props {
-  me: Account;
-  addCourse: typeof addCourse;
-}
+interface Props {}
 
-const ApplyCourse: FunctionComponent<Props> = ({ me, addCourse }) => {
+const ApplyCourse: FunctionComponent<Props> = ({}) => {
   useTitle("课程申请 | 默识 - 作者端");
-  const [course, setCourse] = useState<Course>({
+  const store = useContext(StoreContext);
+  const me = store.me!;
+  const [course, setCourse] = useState<ICourse>({
     accountId: me.id,
     buyerCount: 0,
     name: "", // *
@@ -45,7 +48,7 @@ const ApplyCourse: FunctionComponent<Props> = ({ me, addCourse }) => {
     publishAt: 0,
     status: CourseStatus.STATUS_INIT
   });
-  const [application, setApplication] = useState<Application>(({
+  const [application, setApplication] = useState<IApplication>(({
     id: 0,
     accountId: me.id,
     category: 0,
@@ -53,7 +56,7 @@ const ApplyCourse: FunctionComponent<Props> = ({ me, addCourse }) => {
     content: "",
     createAt: 0,
     status: ApplicationStatus.STATUS_COMMIT
-  } as Partial<Application>) as Application);
+  } as Partial<IApplication>) as IApplication);
   const [introduce, setIntroduce] = useState(
     BraftEditor.createEditorState(null)
   );
@@ -160,8 +163,8 @@ const ApplyCourse: FunctionComponent<Props> = ({ me, addCourse }) => {
               course.id = ret.courseId;
               course.createAt = ret.courseCreateAt;
               course.status = ret.courseStatus;
-              addCourse(course);
-              Control.go(`/course/detail/${course.id}`); 
+              store.courses.push(Course.from(course));
+              Control.go(`/course/detail/${course.id}`);
             } else {
               message.error(ret.msg);
             }
@@ -177,7 +180,4 @@ const ApplyCourse: FunctionComponent<Props> = ({ me, addCourse }) => {
   );
 };
 
-export default connect(
-  (state: State) => ({ me: state.me! }),
-  { addCourse }
-)(ApplyCourse);
+export default observer(ApplyCourse);

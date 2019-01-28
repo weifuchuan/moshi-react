@@ -1,13 +1,12 @@
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
-import App from './App';
-import store from './store';
-import './index.scss';
-import { Provider } from 'react-redux';
+import * as ReactDOM from "react-dom";
+import * as React from "react";
+import App from "./App";
+import "./index.scss";
+import store, { StoreContext } from "./store";
 
 ReactDOM.render(
-	<Provider store={store}>
-		<App />
-	</Provider>,
-	document.getElementById('root')
+  <StoreContext.Provider value={store}>
+    <App />
+  </StoreContext.Provider>,
+  document.getElementById("root")
 );

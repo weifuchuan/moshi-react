@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import "./CommentItem.scss";
-import { IssueComment } from "@/common/models/issue";
+import { IIssueComment } from "@/common/models/Issue";
 import DefaultAvatar from "../DefaultAvatar";
 import { fromNow } from "@/common/kit/functions";
 import MarkdownDiv from "../MarkdownDiv";
 import { Popover, Icon } from "antd";
 
 interface Props {
-  comment: IssueComment;
+  comment: IIssueComment;
   onClickAccount: (id: number) => void;
-  onQuoteReply: (comment: IssueComment) => void;
-  refToNewIssue: (comment: IssueComment) => void;
+  onQuoteReply: (comment: IIssueComment) => void;
+  refToNewIssue: (comment: IIssueComment) => void;
 }
 
 export default function CommentItem({

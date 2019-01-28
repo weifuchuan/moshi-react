@@ -1,10 +1,10 @@
 import React from "react";
-import { Course } from "@/common/models/course";
+import { ICourse } from "@/common/models/Course";
 import "./CourseItem.scss";
-import { CourseStatus } from "@/common/models/course";
+import { CourseStatus } from "@/common/models/Course";
 
 interface Props {
-  course: Course;
+  course: ICourse;
   onClick: () => void;
 }
 

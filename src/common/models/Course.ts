@@ -1,0 +1,206 @@
+import BitKit from "@/common/kit/BitKit";
+import { GET, POST_FORM, Ret } from "@/common/kit/req";
+import { observable } from "mobx";
+
+import { _ICourse } from "./_db";
+import { IArticle } from "./Article";
+import Issue, { IIssue } from "./Issue";
+import Article from "@/common/models/Article";
+
+export type ICourse = _ICourse;
+
+export default class Course implements ICourse {
+  @observable id: number = 0;
+  @observable accountId: number = 0;
+  @observable name: string = "";
+  @observable introduce: string = "";
+  @observable introduceImage?: string | undefined;
+  @observable note?: string | undefined;
+  @observable createAt: number = 0;
+  @observable publishAt?: number | undefined;
+  @observable buyerCount: number = 0;
+  @observable courseType: number = 0;
+  @observable price?: number | undefined;
+  @observable discountedPrice?: number | undefined;
+  @observable offerTo?: number | undefined;
+  @observable status: number = 0;
+
+  // foreign
+  // @observable issues: Issue[] = [];
+  // @observable articles: Article[] = [];
+
+  static from(i: ICourse) {
+    const instance = new Course();
+    Object.assign(instance, i);
+    return instance;
+  }
+
+  async detailed() {
+    const { articles, issues } = await Course.detail(this.id);
+    // this.articles = articles;
+    // this.issues = issues;
+    return { articles, issues };
+  }
+
+  async update(items: Partial<ICourse>) {
+    const resp = await POST_FORM("/course/update", { id: this.id, ...items });
+    const ret = resp.data;
+    if (ret.state == "ok") {
+      Object.assign(this, items);
+      return;
+    } else {
+      throw ret.msg;
+    }
+  }
+
+  /**
+   * APIs
+   */
+
+  static async myCourses(): Promise<Course[]> {
+    const resp = await GET<ICourse[]>("/course/myByTeacher");
+    return resp.data.map(Course.from);
+  }
+
+  static async create(
+    name: string,
+    introduce: string,
+    courseType: number,
+    title: string,
+    content: string
+  ): Promise<Course> {
+    const resp = await POST_FORM("/course/create", {
+      name,
+      introduce,
+      courseType,
+      title,
+      content
+    });
+    const { courseId, courseCreateAt, courseStatus, accountId } = resp.data;
+    return Course.from({
+      id: courseId,
+      createAt: courseCreateAt,
+      status: courseStatus,
+      name,
+      introduce,
+      courseType,
+      buyerCount: 0,
+      accountId
+    });
+  }
+
+  static async fetchById(id: number) {
+    // TODO
+    // const resp = await GET("/course/")
+  }
+
+  static async detail(id: number) {
+    const resp = await GET<{
+      articles: IArticle[];
+      issues: IIssue[];
+    }>("/course/detail", { id });
+    const { articles, issues } = resp.data;
+    return observable({
+      articles: articles.map(Article.from),
+      issues: issues.map(Issue.from)
+    });
+  }
+
+  static async update(id: number, items: { [key: string]: number | string }) {
+    const resp = await POST_FORM("/course/update", { id, ...items });
+    return resp.data;
+  }
+
+  /**
+   * Constants
+   */
+
+  static readonly STATUS = Object.freeze({
+    STATUS_INIT: 0,
+    STATUS_LOCK: 1,
+    STATUS_PASSED: 1 << 1,
+    STATUS_PUBLISH: 1 << 2,
+    isInit(course: ICourse) {
+      return course.status === 0;
+    },
+    isLock(course: ICourse) {
+      return BitKit.at(course.status, 0) === 1;
+    },
+    isPassed(course: ICourse) {
+      return BitKit.at(course.status, 1) === 1;
+    },
+    isPublish(course: ICourse) {
+      return BitKit.at(course.status, 2) === 1;
+    }
+  });
+
+  static readonly TYPE = Object.freeze({
+    COLUMN: 1,
+    VIDEO: 2
+  });
+}
+
+export const CourseStatus = {
+  STATUS_INIT: 0,
+  STATUS_LOCK: 1,
+  STATUS_PASSED: 1 << 1,
+  STATUS_PUBLISH: 1 << 2,
+  isInit(course: ICourse) {
+    return course.status === 0;
+  },
+  isLock(course: ICourse) {
+    return BitKit.at(course.status, 0) === 1;
+  },
+  isPassed(course: ICourse) {
+    return BitKit.at(course.status, 1) === 1;
+  },
+  isPublish(course: ICourse) {
+    return BitKit.at(course.status, 2) === 1;
+  }
+};
+
+export const CourseType = {
+  TYPE_COLUMN: 1,
+  TYPE_VIDEO: 2
+};
+
+export class CourseAPI {
+  static async myCourses(): Promise<ICourse[]> {
+    const resp = await GET<ICourse[]>("/course/myByTeacher");
+    return resp.data;
+  }
+
+  static async create(
+    name: string,
+    introduce: string,
+    courseType: number,
+    title: string,
+    content: string
+  ): Promise<Ret> {
+    const resp = await POST_FORM("/course/create", {
+      name,
+      introduce,
+      courseType,
+      title,
+      content
+    });
+    return resp.data;
+  }
+
+  static async fetchById(id: number) {
+    // TODO
+    // const resp = await GET("/course/")
+  }
+
+  static async detail(id: number) {
+    const resp = await GET<{
+      articles: IArticle[];
+    }>("/course/detail", { id });
+    return resp.data;
+  }
+
+  static async update(id: number, items: { [key: string]: number | string }) {
+    const resp = await POST_FORM("/course/update", { id, ...items });
+    return resp.data;
+  }
+}
