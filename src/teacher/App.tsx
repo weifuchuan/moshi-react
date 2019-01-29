@@ -1,25 +1,13 @@
-import {
-  buildActivatedFilter,
-  buildLockFilter,
-  buildLoggedFilter,
-  buildRoleFilter,
-  buildUnactivatedFilter,
-  buildUnlockFilter,
-  buildUnloggedFilter
-} from "@/common/kit/filters";
-import Account, {
-  IAccount,
-  AccountStatus,
-  AccountAPI
-} from "@/common/models/Account";
+import LoadingRoute from "@/common/components/LoadingRoute";
+import { buildActivatedFilter, buildLockFilter, buildLoggedFilter, buildRoleFilter, buildUnactivatedFilter, buildUnlockFilter, buildUnloggedFilter } from "@/common/kit/filters";
+import Account, { AccountStatus } from "@/common/models/Account";
+import Course from "@/common/models/Course";
 import { message } from "antd";
+import { computed } from "mobx";
 import * as React from "react";
 import { Control, HashRouter, Route } from "react-keeper";
 import "./App.scss";
-import LoadingRoute from "@/common/components/LoadingRoute";
-import { CourseStatus, ICourse } from "@/common/models/Course";
 import store from "./store";
-import { computed } from "mobx";
 
 const Router = HashRouter;
 
@@ -63,9 +51,8 @@ class App extends React.Component<{}> {
                   const { courses } = store;
                   if (
                     courses.length !== 0 &&
-                    courses.findIndex(
-                      (course: ICourse) =>
-                        course.status === CourseStatus.STATUS_INIT
+                    courses.findIndex(course =>
+                      Course.STATUS.isInit(course)
                     ) !== -1
                   ) {
                     message.warn("您尚有申请未通过的课程");
@@ -78,10 +65,6 @@ class App extends React.Component<{}> {
             <LoadingRoute
               path={"/detail/:id"}
               imported={import("./pages/Course/pages/Detail")}
-            />
-            <LoadingRoute
-              path={"/edit-intro/:id"}
-              imported={import("./pages/Course/pages/EditIntro")}
             />
           </LoadingRoute>
           <LoadingRoute

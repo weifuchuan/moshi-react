@@ -76,11 +76,11 @@ export default class Course implements ICourse {
       title,
       content
     });
-    const { courseId, courseCreateAt, courseStatus, accountId } = resp.data;
+    const { courseId, courseCreateAt, accountId } = resp.data;
     return Course.from({
       id: courseId,
       createAt: courseCreateAt,
-      status: courseStatus,
+      status: Course.STATUS.INIT,
       name,
       introduce,
       courseType,
@@ -116,10 +116,10 @@ export default class Course implements ICourse {
    */
 
   static readonly STATUS = Object.freeze({
-    STATUS_INIT: 0,
-    STATUS_LOCK: 1,
-    STATUS_PASSED: 1 << 1,
-    STATUS_PUBLISH: 1 << 2,
+    INIT: 0,
+    LOCK: 1,
+    PASSED: 1 << 1,
+    PUBLISH: 1 << 2,
     isInit(course: ICourse) {
       return course.status === 0;
     },
@@ -139,30 +139,6 @@ export default class Course implements ICourse {
     VIDEO: 2
   });
 }
-
-export const CourseStatus = {
-  STATUS_INIT: 0,
-  STATUS_LOCK: 1,
-  STATUS_PASSED: 1 << 1,
-  STATUS_PUBLISH: 1 << 2,
-  isInit(course: ICourse) {
-    return course.status === 0;
-  },
-  isLock(course: ICourse) {
-    return BitKit.at(course.status, 0) === 1;
-  },
-  isPassed(course: ICourse) {
-    return BitKit.at(course.status, 1) === 1;
-  },
-  isPublish(course: ICourse) {
-    return BitKit.at(course.status, 2) === 1;
-  }
-};
-
-export const CourseType = {
-  TYPE_COLUMN: 1,
-  TYPE_VIDEO: 2
-};
 
 export class CourseAPI {
   static async myCourses(): Promise<ICourse[]> {

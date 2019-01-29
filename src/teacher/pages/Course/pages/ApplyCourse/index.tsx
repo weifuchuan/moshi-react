@@ -2,27 +2,21 @@ import Panel from "@/common/components/Panel";
 import RichEditor from "@/common/components/RichEditor";
 import useTitle from "@/common/hooks/useTitle";
 import { select } from "@/common/kit/req";
-import { IAccount } from "@/common/models/Account";
-import { IApplication, ApplicationStatus } from "@/common/models/Application";
-import Course, {
-  ICourse,
-  CourseAPI,
-  CourseStatus,
-  CourseType
-} from "@/common/models/Course";
+import { ApplicationStatus, IApplication } from "@/common/models/Application";
+import Course, { CourseAPI, ICourse } from "@/common/models/Course";
+import { StoreContext } from "@/teacher/store";
 import { Button, Input, message, Select } from "antd";
 import BraftEditor from "braft-editor";
 import "github-markdown-css/github-markdown.css";
+import { observer } from "mobx-react-lite";
 import React, {
   FunctionComponent,
+  useContext,
   useEffect,
-  useState,
-  useContext
+  useState
 } from "react";
-import "./index.scss";
 import { Control } from "react-keeper";
-import { observer } from "mobx-react-lite";
-import { StoreContext } from "@/teacher/store";
+import "./index.scss";
 
 const Option = Select.Option;
 
@@ -36,7 +30,7 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
     accountId: me.id,
     buyerCount: 0,
     name: "", // *
-    courseType: CourseType.TYPE_COLUMN, // *
+    courseType: Course.TYPE.COLUMN, // *
     createAt: 0,
     discountedPrice: 0,
     id: 0,
@@ -46,7 +40,7 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
     offerTo: 0,
     price: 0,
     publishAt: 0,
-    status: CourseStatus.STATUS_INIT
+    status: Course.STATUS.INIT
   });
   const [application, setApplication] = useState<IApplication>(({
     id: 0,
@@ -116,15 +110,6 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
           onChange={x => setIntroduce(x)}
           style={{ marginBottom: "1em" }}
         />
-
-        {/* <Editor
-          placeholder={"课程简介"}
-          value={course.introduce}
-          onChange={value => setCourse({ ...course, introduce: value })}
-          onSave={value => setCourse({ ...course, introduce: value })}
-          height="400px"
-          style={{ marginBottom: "1em" }}
-        /> */}
         <Input
           value={application.title}
           onInput={(e: any) =>
@@ -138,35 +123,25 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
           onChange={x => setContent(x)}
           style={{ marginBottom: "1em" }}
         />
-        {/* <Editor
-          value={application.content}
-          onChange={value => setApplication({ ...application, content: value })}
-          onSave={value => setApplication({ ...application, content: value })}
-          height="400px"
-          style={{ marginBottom: "1em" }}
-        /> */}
         <Button
           onClick={async () => {
             setCommiting(false);
             course.introduce = introduce.toHTML();
             application.content = content.toHTML();
-            const ret = await CourseAPI.create(
-              course.name,
-              course.introduce,
-              course.courseType,
-              application.title,
-              application.content
-            );
-            if (ret.state === "ok") {
+            try {
+              const course2 = await Course.create(
+                course.name,
+                course.introduce,
+                course.courseType,
+                application.title,
+                application.content
+              );
               message.success("提交成功");
               setDisabled(true);
-              course.id = ret.courseId;
-              course.createAt = ret.courseCreateAt;
-              course.status = ret.courseStatus;
-              store.courses.push(Course.from(course));
-              Control.go(`/course/detail/${course.id}`);
-            } else {
-              message.error(ret.msg);
+              store.courses.push(Course.from(course2));
+              Control.go(`/course/detail/${course2.id}`);
+            } catch (err) {
+              message.error(err);
             }
           }}
           loading={commiting}

@@ -1,19 +1,16 @@
-import Panel from "@/common/components/Panel";
-import { formatTime } from "@/common/kit/functions";
-import { IAccount } from "@/common/models/Account";
-import Article, { IArticle } from "@/common/models/Article";
-import Course, { ICourse, CourseStatus } from "@/common/models/Course";
-import { Button, List, Skeleton, Tabs, Popconfirm, message } from "antd";
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { Link, Control } from "react-keeper";
-import "./index.scss";
-import RichEditor from "@/common/components/RichEditor";
-import BraftEditor from "braft-editor";
 import IssueList from "@/common/components/IssueList";
-import { IIssue } from "@/common/models/Issue";
-import useTitle from "@/common/hooks/useTitle";
+import Panel from "@/common/components/Panel";
+import RichEditor from "@/common/components/RichEditor";
+import { formatTime } from "@/common/kit/functions";
+import Article, { IArticle } from "@/common/models/Article";
+import Course from "@/common/models/Course";
 import { StoreContext } from "@/teacher/store";
+import { Button, List, message, Popconfirm, Skeleton, Tabs } from "antd";
+import BraftEditor from "braft-editor";
 import { observer } from "mobx-react-lite";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Link } from "react-keeper";
+import "./index.scss";
 
 const TabPane = Tabs.TabPane;
 
@@ -58,23 +55,23 @@ function Detail({ params }: Props) {
   let status = null;
   if (!course) {
     status = "课程不存在";
-  } else if (CourseStatus.isLock(course)) {
+  } else if (Course.STATUS.isLock(course)) {
     status = (
       <span style={{ backgroundColor: "red", color: "white" }}>已锁定</span>
     );
-  } else if (CourseStatus.isInit(course)) {
+  } else if (Course.STATUS.isInit(course)) {
     status = (
       <span style={{ backgroundColor: "goldenrod", color: "white" }}>
         审核中
       </span>
     );
-  } else if (CourseStatus.isPublish(course)) {
+  } else if (Course.STATUS.isPublish(course)) {
     // status = (
     //   <span style={{ backgroundColor: "darkorchid", color: "white" }}>
     //     已发布
     //   </span>
     // );
-  } else if (CourseStatus.isPassed(course)) {
+  } else if (Course.STATUS.isPassed(course)) {
     // status = (
     //   <span style={{ backgroundColor: "green", color: "white" }}>已通过</span>
     // );

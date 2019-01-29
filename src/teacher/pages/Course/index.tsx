@@ -1,15 +1,14 @@
 import Panel from "@/common/components/Panel";
 import useTitle from "@/common/hooks/useTitle";
-import { IAccount } from "@/common/models/Account";
-import CourseModel, { CourseStatus } from "@/common/models/Course";
+import CourseModel from "@/common/models/Course";
 import Layout from "@/teacher/layouts/Layout";
+import { StoreContext } from "@/teacher/store";
 import { Button } from "antd";
-import React, { FunctionComponent, useEffect, useContext } from "react";
+import { observer } from "mobx-react-lite";
+import React, { FunctionComponent, useContext, useEffect } from "react";
 import { Control } from "react-keeper";
 import CourseItem from "./CourseItem";
 import "./index.scss";
-import { observer } from "mobx-react-lite";
-import { StoreContext } from "@/teacher/store";
 
 interface Props {}
 
@@ -38,8 +37,8 @@ const Course: FunctionComponent<Props> = ({ children }) => {
               }}
               disabled={
                 courses.length !== 0 &&
-                courses.findIndex(
-                  course => course.status === CourseStatus.STATUS_INIT
+                courses.findIndex(course =>
+                  CourseModel.STATUS.isInit(course)
                 ) !== -1
               }
             >

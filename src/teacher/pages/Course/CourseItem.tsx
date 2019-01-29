@@ -1,7 +1,6 @@
+import Course, { ICourse } from "@/common/models/Course";
 import React from "react";
-import { ICourse } from "@/common/models/Course";
 import "./CourseItem.scss";
-import { CourseStatus } from "@/common/models/Course";
 
 interface Props {
   course: ICourse;
@@ -10,23 +9,23 @@ interface Props {
 
 export default function CourseItem({ course, onClick }: Props) {
   let status = null;
-  if (CourseStatus.isLock(course)) {
+  if (Course.STATUS.isLock(course)) {
     status = (
       <span style={{ backgroundColor: "red", color: "white" }}>已锁定</span>
     );
-  } else if (CourseStatus.isInit(course)) {
+  } else if (Course.STATUS.isInit(course)) {
     status = (
       <span style={{ backgroundColor: "goldenrod", color: "white" }}>
         审核中
       </span>
     );
-  } else if (CourseStatus.isPublish(course)) {
+  } else if (Course.STATUS.isPublish(course)) {
     status = (
       <span style={{ backgroundColor: "darkorchid", color: "white" }}>
         已发布
       </span>
     );
-  } else if (CourseStatus.isPassed(course)) {
+  } else if (Course.STATUS.isPassed(course)) {
     status = (
       <span style={{ backgroundColor: "green", color: "white" }}>已通过</span>
     );

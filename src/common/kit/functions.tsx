@@ -1,8 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import { Converter } from "showdown";
-import { Effect } from "@redux-saga/types";
-import { all, call } from "@redux-saga/core/effects";
+import { Converter } from "showdown"; 
 import moment from "moment";
 
 moment.locale("zh-cn");
@@ -104,36 +102,6 @@ export function selectFiles(): Promise<File[]> {
   });
 }
 
-export function combineSagas(
-  sagas: (() => IterableIterator<Effect<any>>)[]
-): Effect<any> {
-  return all(
-    sagas
-      .map(
-        saga =>
-          function*(): IterableIterator<Effect> {
-            while (true) {
-              try {
-                yield call(saga);
-                break; // saga退出时退出
-              } catch (error) {
-                // saga异常时重启
-                console.error(error);
-              }
-            }
-          }
-      )
-      .map(call)
-  );
-}
-
-export function* repeatSaga(
-  saga: () => IterableIterator<Effect>
-): IterableIterator<Effect> {
-  while (true) {
-    yield* saga();
-  }
-}
 
 export function formatTime(at: number) {
   return moment(at).format("YYYY-MM-DD HH:mm");

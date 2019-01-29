@@ -3,8 +3,7 @@ import "./index.scss";
 import BraftEditor, { BraftEditorProps, EditorState } from "braft-editor";
 import { upload, baseUrl, staticBaseUrl } from "@/common/kit/req";
 import "braft-editor/dist/index.css";
-import "braft-extensions/dist/code-highlighter.css";
-import { GetProps } from "react-redux";
+import "braft-extensions/dist/code-highlighter.css"; 
 
 const CodeHighlighter = require("braft-extensions/dist/code-highlighter")
   .default;
