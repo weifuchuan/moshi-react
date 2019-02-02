@@ -3,7 +3,7 @@ import { RouteProps, Route } from "react-keeper";
 import Loadable from "react-loadable";
 
 interface AsyncRouteProps extends RouteProps {
-  imported: any;
+  imported: () => Promise<any>;
   loading?: () => JSX.Element;
 }
 
@@ -13,8 +13,8 @@ function Loading() {
 
 export default function LoadingRoute(props: AsyncRouteProps) {
   const LoadableComponnet = Loadable({
-    loader: () => props.imported, // oh no!
+    loader: () => props.imported(),
     loading: props.loading ? props.loading : Loading
   });
-  return <Route {...props} component={LoadableComponnet} />;
+  return <Route {...props} component={LoadableComponnet}/>;
 }

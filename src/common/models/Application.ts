@@ -1,6 +1,6 @@
 import { _IApplication } from "@/common/models/_db";
 import { POST_FORM, Ret } from "../kit/req";
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 
 type IApplication = _IApplication;
 export { IApplication };
@@ -18,7 +18,9 @@ export default class Application implements IApplication {
 
   static from(i: IApplication) {
     const instance = new Application();
-    Object.assign(instance, i);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 

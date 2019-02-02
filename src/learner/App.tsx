@@ -1,8 +1,11 @@
 import * as React from "react";
 import { HashRouter, Route } from "react-keeper";
 import "./App.scss";
+import { message } from "antd";
 
 const Router = HashRouter;
+
+message.success("ddd");
 
 class App extends React.Component {
   render() {

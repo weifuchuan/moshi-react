@@ -3,18 +3,13 @@ import RichEditor from "@/common/components/RichEditor";
 import useTitle from "@/common/hooks/useTitle";
 import { select } from "@/common/kit/req";
 import { ApplicationStatus, IApplication } from "@/common/models/Application";
-import Course, { CourseAPI, ICourse } from "@/common/models/Course";
+import Course, { ICourse } from "@/common/models/Course";
 import { StoreContext } from "@/teacher/store";
 import { Button, Input, message, Select } from "antd";
 import BraftEditor from "braft-editor";
 import "github-markdown-css/github-markdown.css";
 import { observer } from "mobx-react-lite";
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import React, { FunctionComponent, useContext, useEffect, useState } from "react";
 import { Control } from "react-keeper";
 import "./index.scss";
 

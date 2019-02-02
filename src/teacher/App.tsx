@@ -1,6 +1,14 @@
 import LoadingRoute from "@/common/components/LoadingRoute";
-import { buildActivatedFilter, buildLockFilter, buildLoggedFilter, buildRoleFilter, buildUnactivatedFilter, buildUnlockFilter, buildUnloggedFilter } from "@/common/kit/filters";
-import Account, { AccountStatus } from "@/common/models/Account";
+import {
+  buildActivatedFilter,
+  buildLockFilter,
+  buildLoggedFilter,
+  buildRoleFilter,
+  buildUnactivatedFilter,
+  buildUnlockFilter,
+  buildUnloggedFilter
+} from "@/common/kit/filters";
+import Account from "@/common/models/Account";
 import Course from "@/common/models/Course";
 import { message } from "antd";
 import { computed } from "mobx";
@@ -13,6 +21,7 @@ const Router = HashRouter;
 
 class App extends React.Component<{}> {
   probingStatus: "start" | "doing" | "end" = "start";
+
   @computed get logged() {
     return !!store.me;
   }
@@ -23,7 +32,7 @@ class App extends React.Component<{}> {
         <div className={"container"}>
           <LoadingRoute
             path={"/>"}
-            imported={import("./pages/Home")}
+            imported={() => import("./pages/Home")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -34,7 +43,7 @@ class App extends React.Component<{}> {
           />
           <LoadingRoute
             path={"/course"}
-            imported={import("./pages/Course")}
+            imported={() => import("./pages/Course")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -45,7 +54,7 @@ class App extends React.Component<{}> {
           >
             <LoadingRoute
               path={"/apply"}
-              imported={import("./pages/Course/pages/ApplyCourse")}
+              imported={() => import("./pages/Course/pages/ApplyCourse")}
               enterFilter={[
                 cb => {
                   const { courses } = store;
@@ -64,12 +73,12 @@ class App extends React.Component<{}> {
             />
             <LoadingRoute
               path={"/detail/:id"}
-              imported={import("./pages/Course/pages/Detail")}
+              imported={() => import("./pages/Course/pages/Detail")}
             />
           </LoadingRoute>
           <LoadingRoute
             path={"/article/:id>"}
-            imported={import("./pages/Article")}
+            imported={() => import("./pages/Article")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -80,7 +89,18 @@ class App extends React.Component<{}> {
           />
           <LoadingRoute
             path={"/issue/:id>"}
-            imported={import("./pages/Issue")}
+            imported={() => import("./pages/Issue")}
+            enterFilter={[
+              /* 已登录，已激活，未锁定，是课程作者 */
+              this.loggedFilter,
+              this.activatedFilter,
+              this.unlockFilter,
+              this.isTeacherFilter
+            ]}
+          />
+          <LoadingRoute
+            path={"/media>"}
+            imported={() => import("./pages/Media")}
             enterFilter={[
               /* 已登录，已激活，未锁定，是课程作者 */
               this.loggedFilter,
@@ -91,17 +111,17 @@ class App extends React.Component<{}> {
           />
           <LoadingRoute
             path={"/login>"}
-            imported={import("./pages/Login")}
+            imported={() => import("./pages/Login")}
             enterFilter={[this.unloggedFilter]}
           />
           <LoadingRoute
             path={"/reg>"}
-            imported={import("./pages/Reg")}
+            imported={() => import("./pages/Reg")}
             enterFilter={[this.unloggedFilter]}
           />
           <LoadingRoute
             path={"/activate>"}
-            imported={import("./pages/Activate")}
+            imported={() => import("./pages/Activate")}
             enterFilter={[
               this.loggedFilter,
               this.unactivatedFilter,
@@ -110,7 +130,7 @@ class App extends React.Component<{}> {
           />
           <LoadingRoute
             path={"/apply>"}
-            imported={import("./pages/Apply")}
+            imported={() => import("./pages/Apply")}
             enterFilter={[
               this.loggedFilter,
               this.activatedFilter,
@@ -118,7 +138,7 @@ class App extends React.Component<{}> {
               this.isNotTeacherFilter
             ]}
           />
-          <Route miss component={() => <h1>404</h1>} />
+          <Route miss component={() => <h1>404</h1>}/>
         </div>
       </Router>
     );
@@ -138,7 +158,7 @@ class App extends React.Component<{}> {
 
   private isTeacherFilter = buildRoleFilter(
     { props: store },
-    AccountStatus.isTeacher,
+    Account.STATUS.isTeacher,
     () => {
       message.error("无教师权限");
       Control.go("/apply");
@@ -147,7 +167,7 @@ class App extends React.Component<{}> {
 
   private isNotTeacherFilter = buildRoleFilter(
     { props: store },
-    account => !AccountStatus.isTeacher(account),
+    account => !Account.STATUS.isTeacher(account),
     () => {
       message.info("已有教师权限");
       Control.go("/");
@@ -164,7 +184,8 @@ class App extends React.Component<{}> {
         try {
           const account = await Account.probeLoggedAccount();
           store.me = account;
-        } catch (err) {}
+        } catch (err) {
+        }
         this.probingStatus = "end";
       }
     })();
@@ -172,3 +193,7 @@ class App extends React.Component<{}> {
 }
 
 export default App;
+
+if (__DEV__) {
+  (window as any).Control = Control;
+}

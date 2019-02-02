@@ -41,7 +41,7 @@ export default class Modal extends React.Component<{
 						width: this.props.width,
 						height: this.props.height,
 						backgroundColor: '#ffffff',
-						borderRadius: '0.5em',
+						// borderRadius: '0.5em',
 						position: 'relative',
 						overflow: 'auto'
 					}}

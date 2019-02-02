@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import Layout from "@/teacher/layouts/Layout";
-import { Control } from "react-keeper";
 import RegPanel from "@/common/components/RegPanel";
-import "./index.scss";
 import useTitle from "@/common/hooks/useTitle";
-import Account, { AccountAPI } from "@/common/models/Account";
-import { message } from "antd";
 import { fetchBase64Image } from "@/common/kit/req";
-import { observer } from "mobx-react-lite";
+import Account from "@/common/models/Account";
+import Layout from "@/teacher/layouts/Layout";
 import { StoreContext } from "@/teacher/store";
+import { message } from "antd";
+import { observer } from "mobx-react-lite";
+import React, { useContext } from "react";
+import { Control } from "react-keeper";
+import "./index.scss";
 
 function Reg() {
   useTitle("注册 | 默识 - 作者端");

@@ -1,14 +1,13 @@
-import React, { useContext } from "react";
-import Layout from "@/teacher/layouts/Layout";
-import { Control } from "react-keeper";
-import "./index.scss";
-import useTitle from "@/common/hooks/useTitle";
-import { IAccount, AccountAPI } from "@/common/models/Account";
 import ActivatePanel from "@/common/components/ActivatePanel";
+import useTitle from "@/common/hooks/useTitle";
+import Account from "@/common/models/Account";
+import Layout from "@/teacher/layouts/Layout";
+import { StoreContext } from "@/teacher/store";
 import { message } from "antd";
 import { observer } from "mobx-react-lite";
-import { StoreContext } from "@/teacher/store";
-import Account from "@/common/models/Account";
+import React, { useContext } from "react";
+import { Control } from "react-keeper";
+import "./index.scss";
 
 function Activate() {
   useTitle("激活 | 默识 - 作者端");
@@ -19,9 +18,9 @@ function Activate() {
       <div className="Activate">
         <ActivatePanel
           email={me.email}
-          resend={AccountAPI.reSendActivateEmail}
+          resend={Account.reSendActivateEmail}
           confirm={async code => {
-            let ret = await AccountAPI.activate(code);
+            let ret = await Account.activate(code);
             if (ret.state === "ok") {
               message.success("激活成功");
               me.status = Account.STATUS.LEARNER;

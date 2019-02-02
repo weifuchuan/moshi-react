@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import "github-markdown-css/github-markdown.css";
-import { markdownToHtml } from "@/common/kit/functions";
+import markdownToHtml from "@/common/kit/functions/markdownToHtml";
 
 export default function MarkdownDiv({
   md,

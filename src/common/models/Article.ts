@@ -1,6 +1,6 @@
 import { _IArticle } from "./_db";
 import { GET, Ret, POST_FORM, select } from "@/common/kit/req";
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 import { _IArticleComment } from "./_db";
 import Account from "@/common/models/Account";
 
@@ -20,7 +20,7 @@ export default class Article implements IArticle {
   @observable publishAt?: number | undefined;
   @observable createAt: number = 0;
   @observable status: number = 0;
-  @observable audioId?: number | undefined;
+  @observable audioId: number = 0;
 
   // foreign
   @observable comments: ArticleComment[] = [];
@@ -39,7 +39,7 @@ export default class Article implements IArticle {
   }
 
   async comment(me: Account, content: string, replyTo?: number) {
-    const ret = await Article.comment(this.id, content,replyTo);
+    const ret = await Article.comment(this.id, content, replyTo);
     if (ret.state === "ok") {
       const comment = {
         id: ret.id,
@@ -60,9 +60,24 @@ export default class Article implements IArticle {
     }
   }
 
+  async update() {
+    const resp = await POST_FORM("/article/update", {
+      id: this.id,
+      status,
+      audioId: this.audioId,
+      content: this.content,
+      title: this.title
+    });
+    if (resp.data.state === "fail") {
+      throw resp.data.msg;
+    }
+  }
+
   static from(i: IArticle) {
     const instance = new Article();
-    Object.assign(instance, i);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 
@@ -80,6 +95,23 @@ export default class Article implements IArticle {
       return article;
     } else {
       throw ret.msg;
+    }
+  }
+
+  static async create(
+    title: string,
+    content: string,
+    courseId: number,
+    audioId: number
+  ) {
+    const resp = await POST_FORM("/article/create", {
+      title,
+      content,
+      courseId,
+      audioId
+    });
+    if (resp.data.state === "fail") {
+      throw resp.data.msg;
     }
   }
 
@@ -144,7 +176,7 @@ export class ArticleComment implements IArticleComment {
 
   static from(i: IArticleComment) {
     const instance = new ArticleComment();
-    Object.assign(instance, i);
+    runInAction(() => Object.assign(instance, i));
     return instance;
   }
 

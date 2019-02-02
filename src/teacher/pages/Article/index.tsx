@@ -1,37 +1,29 @@
-import useTitle from "@/common/hooks/useTitle";
-import { IAccount } from "@/common/models/Account";
-import { ICourse } from "@/common/models/Course";
-import Layout from "@/teacher/layouts/Layout";
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-  useRef,
-  useContext
-} from "react";
-import "./index.scss";
-import { IArticle, ArticleComment } from "@/common/models/Article";
-import {
-  Skeleton,
-  message,
-  Input,
-  Button,
-  List,
-  Popconfirm,
-  Avatar
-} from "antd";
+import { PopCommentEditor } from "@/common/components/CommentEditor";
+import DefaultAvatar from "@/common/components/DefaultAvatar";
+import Expandable from "@/common/components/Expandable";
+import MarkdownDiv from "@/common/components/MarkdownDiv";
 import Panel from "@/common/components/Panel";
 import RichEditor from "@/common/components/RichEditor";
-import BraftEditor, { EditorState } from "braft-editor";
-import { PopCommentEditor } from "@/common/components/CommentEditor";
-import MarkdownDiv from "@/common/components/MarkdownDiv";
-import DefaultAvatar from "@/common/components/DefaultAvatar";
-import { fromNow } from "@/common/kit/functions";
-import { Link } from "react-keeper";
-import Expandable from "@/common/components/Expandable";
+import useTitle from "@/common/hooks/useTitle";
+import { fromNow, formatTime } from "@/common/kit/functions/moments";
+import ArticleModel, { ArticleComment } from "@/common/models/Article";
+import Audio from "@/common/models/Audio";
+import Layout from "@/teacher/layouts/Layout";
 import { StoreContext } from "@/teacher/store";
-import { observer } from "mobx-react-lite";
-import ArticleModel from "@/common/models/Article";
+import {
+  Button,
+  Input,
+  List,
+  message,
+  Popconfirm,
+  Select,
+  Skeleton
+} from "antd";
+import BraftEditor from "braft-editor";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { FunctionComponent, useContext, useEffect, useRef } from "react";
+import { Link, Control } from "react-keeper";
+import "./index.scss";
 
 interface Props {
   params: {
@@ -42,25 +34,47 @@ interface Props {
 const Article: FunctionComponent<Props> = ({ params }) => {
   const store = useContext(StoreContext);
   const articles = store.articles;
-  const id = Number.parseInt(params.id);
-  const article = articles.find(a => a.id === id)!; // TODO: article not exists in local
+  const id = params.id === "create" ? 0 : Number.parseInt(params.id);
+  const article: ArticleModel | undefined =
+    id === 0
+      ? ArticleModel.from({
+          id,
+          courseId: Control.state.courseId,
+          title: "",
+          content: "",
+          createAt: 0,
+          status: 0,
+          audioId: 0
+        })
+      : articles.find(a => a.id === id)!;
+  const audios = store.audios;
+
+  const audioId = useObservable({ value: article ? article.audioId : 0 });
+
+  const titleInput = useRef<Input>(null);
+  const editor = useRef<BraftEditor>(null);
 
   useEffect(() => {
     (async () => {
       if (!article) {
         const article = await ArticleModel.fetch(id);
+        audioId.value=article.audioId; 
         store.articles.push(article);
+      }
+    })();
+    (async () => {
+      if (audios.length === 0) {
+        const audios = await Audio.myUploaded();
+        store.audios = audios;
       }
     })();
   }, []);
 
   useEffect(() => {
-    if (article && article.comments.length === 0) {
+    if (id !== 0 && article && article.comments.length === 0) {
       article.fetchComments();
     }
   }, [article]);
-
-  const editor = useRef<BraftEditor>(null);
 
   useTitle(`${article ? article.title : "文章"} | 默识 - 作者端`);
 
@@ -112,15 +126,75 @@ const Article: FunctionComponent<Props> = ({ params }) => {
             <div>
               <Input
                 defaultValue={article.title}
-                onChange={e => (article.title = e.target.value)}
+                ref={titleInput}
                 style={{ marginBottom: "1em" }}
               />
+              <div style={{ width: "100%", marginBottom: "1em" }}>
+                请选择此文章的录音文件：<Link to={"/media"}>去上传</Link>
+                <Select
+                  defaultValue={article.audioId}
+                  onChange={id => (audioId.value = id)}
+                  style={{ width: "100%" }}
+                >
+                  <Select.Option key={"0"} title={"无"} value={0}>
+                    无
+                  </Select.Option>
+                  {audios.map(audio => {
+                    return (
+                      <Select.Option
+                        key={audio.id.toString()}
+                        title={
+                          audio.name +
+                          " / " +
+                          audio.recorder +
+                          " / " +
+                          formatTime(audio.uploadAt)
+                        }
+                        value={audio.id}
+                      >
+                        {audio.name +
+                          " / " +
+                          audio.recorder +
+                          " / " +
+                          formatTime(audio.uploadAt)}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </div>
               <RichEditor
                 defaultValue={BraftEditor.createEditorState(article.content)}
                 style={{ marginBottom: "1em", height: "auto" }}
                 editorRef={editor}
               />
-              <Button type="primary" onClick={() => {}}>
+              <Button
+                type="primary"
+                onClick={async () => {
+                  article.title = titleInput.current!.input.value;
+                  article.content = editor.current!.getValue().toHTML();
+                  article.audioId = audioId.value;
+                  if (article.id === 0) {
+                    try {
+                      await ArticleModel.create(
+                        article.title,
+                        article.content,
+                        article.courseId,
+                        article.audioId
+                      );
+                      Control.go(`/course/detail/${Control.state.courseId}`);
+                    } catch (err) {
+                      message.error(err);
+                    }
+                  } else {
+                    try {
+                      await article.update();
+                      message.success("更新成功");
+                    } catch (err) {
+                      message.error(err);
+                    }
+                  }
+                }}
+              >
                 保存
               </Button>
             </div>
@@ -133,7 +207,11 @@ const Article: FunctionComponent<Props> = ({ params }) => {
               header={
                 <div>
                   <PopCommentEditor
-                    buttonProps={{ children: "评论", type: "primary" }}
+                    buttonProps={{
+                      children: "评论",
+                      type: "primary",
+                      disabled: id === 0
+                    }}
                     initContent={""}
                     onOk={async content => {
                       await article.comment(store.me!, content);

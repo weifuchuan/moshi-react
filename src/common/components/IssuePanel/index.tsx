@@ -2,12 +2,11 @@ import React, { useRef } from "react";
 import "./index.scss";
 import { IIssue, IIssueComment } from "@/common/models/Issue";
 import { Button, Icon, List } from "antd";
-import { fromNow } from "@/common/kit/functions";
+import { fromNow } from "@/common/kit/functions/moments";
 import CommentItem from "./CommentItem";
 import { IAccount } from "@/common/models/Account";
 import { CommentEditor } from "../CommentEditor";
 import DefaultAvatar from "../DefaultAvatar";
-import ReactDOM from "react-dom";
 
 interface Props {
   me: IAccount;

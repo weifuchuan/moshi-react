@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./CommentItem.scss";
 import { IIssueComment } from "@/common/models/Issue";
 import DefaultAvatar from "../DefaultAvatar";
-import { fromNow } from "@/common/kit/functions";
+import { fromNow } from "@/common/kit/functions/moments";
 import MarkdownDiv from "../MarkdownDiv";
 import { Popover, Icon } from "antd";
 

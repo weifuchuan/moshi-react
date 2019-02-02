@@ -1,16 +1,16 @@
 import qs from "qs";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import EventEmitter  from "wolfy87-eventemitter";
+import EventEmitter from "wolfy87-eventemitter";
 import { fromEvent } from "rxjs";
 
 let baseUrl = "";
 let staticBaseUrl = "";
 if (__DEV__) {
   baseUrl = "/api";
-  staticBaseUrl="http://localhost:8080"
+  staticBaseUrl = "http://localhost:8080";
 }
 
-export { baseUrl,staticBaseUrl };
+export { baseUrl, staticBaseUrl };
 
 export interface Ret {
   state: "ok" | "fail";
@@ -69,14 +69,21 @@ export async function select<T = object>(
   return resp.data;
 }
 
-export function upload(files: File[]) {
+export function upload(
+  files: (File | Blob)[],
+  otherParams: object = {},
+  action: string = "/file/upload"
+) {
   const form = new FormData();
   for (let file of files) {
     form.append("file", file);
   }
+  for (let key in otherParams) {
+    form.append(key, otherParams[key]);
+  }
   const uploadProgress = new EventEmitter();
   const progress = fromEvent<number>(uploadProgress, "uploadProgress");
-  const response = axios.post(`${baseUrl}/file/upload`, form, {
+  const response = axios.post(`${baseUrl}${action}`, form, {
     onUploadProgress: evt => {
       let completed = Math.round((evt.loaded * 100) / evt.total);
       uploadProgress.emit("uploadProgress", completed);

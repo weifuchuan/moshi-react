@@ -4,7 +4,7 @@ import { IIssue, IssueStatus } from "@/common/models/Issue";
 import { List, Button, Avatar } from "antd";
 import { PaginationProps } from "antd/lib/pagination";
 import { Link, Control } from "react-keeper";
-import { fromNow } from "@/common/kit/functions";
+import { fromNow } from "@/common/kit/functions/moments";
 
 interface Props {
   issues: IIssue[];

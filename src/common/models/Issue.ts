@@ -1,7 +1,7 @@
 import { _IIssue, _IIssueComment } from "./_db";
 import { GET, select } from "../kit/req";
 import { POST_FORM } from "@/common/kit/req";
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 import Account from "@/common/models/Account";
 
 export type IIssue = _IIssue & {
@@ -58,7 +58,9 @@ export default class Issue implements IIssue {
 
   static from(i: IIssue) {
     const instance = new Issue();
-    Object.assign(instance, i);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 
@@ -135,7 +137,9 @@ export class IssueComment implements IIssueComment {
 
   static from(i: IIssueComment) {
     const instance = new IssueComment();
-    Object.assign(instance, i);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 

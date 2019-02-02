@@ -1,4 +1,3 @@
-import { markdownToHtml } from "@/common/kit/functions";
 import { Button, Modal } from "antd";
 import { ButtonProps } from "antd/lib/button";
 import "draft-js/dist/Draft.css";
@@ -8,7 +7,8 @@ import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import "./index.scss";
 import { fromEvent } from "rxjs";
-require("@fortawesome/fontawesome-free/js/all.js");
+import markdownToHtml from "@/common/kit/functions/markdownToHtml";
+require("./all.min.js");
 
 interface CommentEditorProps {
   okText?: string;

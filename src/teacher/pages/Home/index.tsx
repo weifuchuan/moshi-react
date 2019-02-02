@@ -18,6 +18,9 @@ const Home: FunctionComponent = () => {
           <Panel className={"box"} onClick={() => Control.go("/course")}>
             <div>我的课程</div>
           </Panel>
+          <Panel className={"box"} onClick={() => Control.go("/media")}>
+            <div>我的媒体资源</div>
+          </Panel>
         </div>
       </div>
     </Layout>

@@ -1,7 +1,7 @@
 import { _IAccount } from "./_db";
 import { GET, Ret, POST_FORM } from "../kit/req";
 import BitKit from "@/common/kit/BitKit";
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 
 type IAccount = _IAccount;
 export { IAccount };
@@ -26,9 +26,11 @@ export default class Account implements IAccount {
   @observable createAt: number = 0;
   @observable status: number = 0;
 
-  static from(account: IAccount) {
+  static from(i: IAccount) {
     const instance = new Account();
-    Object.assign(instance, account);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 
@@ -109,76 +111,4 @@ export default class Account implements IAccount {
     }
   });
 }
-
-export const AccountStatus = {
-  STATUS_REG: 0,
-  STATUS_LOCK: 1 << 0,
-  STATUS_LEARNER: 1 << 1,
-  STATUS_TEACHER: 1 << 2,
-  STATUS_MANAGER: 1 << 3,
-  isReg(account: IAccount) {
-    return account.status === this.STATUS_REG;
-  },
-  isLock(account: IAccount) {
-    return BitKit.at(account.status, 0) === 1;
-  },
-  isLearner(account: IAccount) {
-    return BitKit.at(account.status, 1) === 1;
-  },
-  isTeacher(account: IAccount) {
-    return BitKit.at(account.status, 2) === 1;
-  },
-  isManager(account: IAccount) {
-    return BitKit.at(account.status, 3) === 1;
-  }
-};
-
-export class AccountAPI {
-  static async probeLoggedAccount(): Promise<IAccount> {
-    const resp = await GET<Ret & { account: IAccount }>("/login/probe");
-    if (resp.data.state === "ok") return resp.data.account;
-    else throw resp.data.msg;
-  }
-
-  static async login(
-    email: string,
-    password: string,
-    captcha: string
-  ): Promise<IAccount> {
-    const resp = await POST_FORM<Ret & { account: IAccount }>("/login", {
-      email,
-      password,
-      captcha
-    });
-    if (resp.data.state === "ok") return resp.data.account;
-    else throw resp.data.msg;
-  }
-
-  static async reg(
-    email: string,
-    nickName: string,
-    password: string,
-    captcha: string
-  ): Promise<IAccount> {
-    const resp = await POST_FORM<Ret & { account: IAccount }>("/reg", {
-      email,
-      nickName,
-      password,
-      captcha
-    });
-    if (resp.data.state === "ok") return resp.data.account;
-    else throw resp.data.msg;
-  }
-
-  static async activate(authcode: string) {
-    const resp = await POST_FORM<Ret>("/reg/activate", {
-      authcode
-    });
-    return resp.data;
-  }
-
-  static async reSendActivateEmail() {
-    const resp = await GET<Ret>("/reg/reSendActivateEmail");
-    return resp.data;
-  }
-}
+ 

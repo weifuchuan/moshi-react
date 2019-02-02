@@ -1,15 +1,15 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import App from "./App";
-import { Provider } from "mobx-react";
 import store from "./store";
 import "./index.scss";
+import { StoreContext } from "./store/index";
 
 ReactDOM.render(
   (
-    <Provider store={store}>
+    <StoreContext.Provider value={store}>
       <App />
-    </Provider>
+    </StoreContext.Provider>
   ) as any,
-  document.getElementById('root')
+  document.getElementById("root")
 );

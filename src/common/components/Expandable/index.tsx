@@ -7,7 +7,6 @@ import React, {
   useEffect
 } from "react";
 import * as ReactDOM from "react-dom";
-import { repeat } from "@/common/kit/functions";
 
 export default function Expandable({
   height,

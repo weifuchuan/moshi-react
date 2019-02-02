@@ -1,0 +1,25 @@
+.Media {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  padding: 1em;
+  width: 100%;
+  background-color: #fff;
+
+  @media screen and (min-width: 1080px) {
+    width: 1080px;
+  }
+}
+
+.UploadProgress {
+  z-index: 1000000000000000000000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #ffffffcb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,7 +1,8 @@
-import { repeat } from "@/common/kit/functions";
+
 import { Control, Filter } from "react-keeper";
-import { IAccount, AccountStatus } from "@/common/models/Account";
+import Account, { IAccount  } from "@/common/models/Account";
 import { message, notification } from "antd";
+import repeat from "@/common/kit/functions/repeat";
 
 type FiltedComponent = {
   probingStatus: "start" | "doing" | "end";
@@ -44,7 +45,7 @@ export const buildUnloggedFilter: (
 export const buildLockFilter: (_this: {
   props: { me: IAccount | null };
 }) => Filter = _this => async (cb, props) => {
-  if (_this.props.me && AccountStatus.isLock(_this.props.me)) {
+  if (_this.props.me && Account.STATUS.isLock(_this.props.me)) {
     cb();
   }
 };
@@ -52,7 +53,7 @@ export const buildLockFilter: (_this: {
 export const buildUnlockFilter: (_this: {
   props: { me: IAccount | null };
 }) => Filter = _this => async (cb, props) => {
-  if (_this.props.me && !AccountStatus.isLock(_this.props.me)) {
+  if (_this.props.me && !Account.STATUS.isLock(_this.props.me)) {
     cb();
   } else {
     notification.error({
@@ -66,7 +67,7 @@ export const buildUnlockFilter: (_this: {
 export const buildActivatedFilter: (_this: {
   props: { me: IAccount | null };
 }) => Filter = _this => async (cb, props) => {
-  if (_this.props.me && !AccountStatus.isReg(_this.props.me)) {
+  if (_this.props.me && !Account.STATUS.isReg(_this.props.me)) {
     cb();
   } else {
     message.warn("账号未激活");
@@ -77,7 +78,7 @@ export const buildActivatedFilter: (_this: {
 export const buildUnactivatedFilter: (_this: {
   props: { me: IAccount | null };
 }) => Filter = _this => async (cb, props) => {
-  if (_this.props.me && AccountStatus.isReg(_this.props.me)) {
+  if (_this.props.me && Account.STATUS.isReg(_this.props.me)) {
     cb();
   } else {
     message.warn("账号已激活");

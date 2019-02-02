@@ -1,15 +1,23 @@
 import IssueList from "@/common/components/IssueList";
 import Panel from "@/common/components/Panel";
 import RichEditor from "@/common/components/RichEditor";
-import { formatTime } from "@/common/kit/functions";
+import { formatTime } from "@/common/kit/functions/moments";
 import Article, { IArticle } from "@/common/models/Article";
 import Course from "@/common/models/Course";
 import { StoreContext } from "@/teacher/store";
-import { Button, List, message, Popconfirm, Skeleton, Tabs } from "antd";
+import {
+  Button,
+  List,
+  message,
+  Popconfirm,
+  Skeleton,
+  Tabs,
+  Collapse
+} from "antd";
 import BraftEditor from "braft-editor";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-keeper";
+import { Link, Control } from "react-keeper";
 import "./index.scss";
 
 const TabPane = Tabs.TabPane;
@@ -27,6 +35,7 @@ function Detail({ params }: Props) {
   const course = courses.find(c => c.id === id)!; // TODO: handle course not exists
   const issues = store.issues;
   const articles = store.articles;
+  const sections = store.sections; 
 
   const [loading, setLoading] = useState(true);
 
@@ -82,40 +91,64 @@ function Detail({ params }: Props) {
       {status}
       {course ? (
         <Tabs defaultActiveKey="1" onChange={key => {}} style={{ flex: 1 }}>
-          <TabPane tab="文章" key="1">
-            <List
-              className={"TabPanelInner"}
-              header={<Button>新增课程</Button>}
-              itemLayout={"vertical"}
-              dataSource={articles.filter(
-                article => article.courseId === course!.id
-              )}
-              renderItem={(article: IArticle) => {
-                return (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={
-                        <Link to={`/article/${article.id}`}>
-                          {article.title}
-                        </Link>
-                      }
-                      description={`状态：${
-                        article.status === Article.STATUS.INIT
-                          ? "编辑中"
-                          : article.status === Article.STATUS.PUBLISH
-                          ? "已发布"
-                          : "已锁定"
-                      }；创建于：${formatTime(article.createAt)}${
-                        article.status === Article.STATUS.PUBLISH
-                          ? `；发布于：${formatTime(article.publishAt!)}`
-                          : ""
-                      }`}
-                    />
-                  </List.Item>
-                );
-              }}
-            />
-          </TabPane>
+          {course.courseType === Course.TYPE.COLUMN ? (
+            <TabPane tab="文章" key="1">
+              <List
+                className={"TabPanelInner"}
+                header={
+                  <Button
+                    onClick={() =>
+                      Control.go("/article/create", { courseId: course.id })
+                    }
+                  >
+                    新增文章
+                  </Button>
+                }
+                itemLayout={"vertical"}
+                dataSource={articles.filter(
+                  article => article.courseId === course!.id
+                )}
+                renderItem={(article: IArticle) => {
+                  return (
+                    <List.Item>
+                      <List.Item.Meta
+                        title={
+                          <Link to={`/article/${article.id}`}>
+                            {article.title}
+                          </Link>
+                        }
+                        description={`状态：${
+                          article.status === Article.STATUS.INIT
+                            ? "编辑中"
+                            : article.status === Article.STATUS.PUBLISH
+                            ? "已发布"
+                            : "已锁定"
+                        }；创建于：${formatTime(article.createAt)}${
+                          article.status === Article.STATUS.PUBLISH
+                            ? `；发布于：${formatTime(article.publishAt!)}`
+                            : ""
+                        }`}
+                      />
+                    </List.Item>
+                  );
+                }}
+              />
+            </TabPane>
+          ) : (
+            <TabPane tab="视频" key="1">
+              <Collapse bordered={false} defaultActiveKey={["1"]}>
+                <Collapse.Panel header="This is panel header 1" key="1">
+                  ss
+                </Collapse.Panel>
+                <Collapse.Panel header="This is panel header 2" key="2">
+                  aaaaaaaaa
+                </Collapse.Panel>
+                <Collapse.Panel header="This is panel header 3" key="3">
+                  xxxxxxxxxxxxxxxx
+                </Collapse.Panel>
+              </Collapse>
+            </TabPane>
+          )}
           <TabPane tab="简介" key="2">
             <Popconfirm
               placement="bottomRight"

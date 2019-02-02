@@ -1,0 +1,14 @@
+.Home {
+  height: 100%;
+  width: 100%;
+  display: flex;
+
+  > :nth-child(1) {
+    width: 200px;
+  }
+
+  > :nth-child(2) {
+    flex: 1;
+    overflow: auto;
+  }
+}

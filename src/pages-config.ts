@@ -9,13 +9,18 @@ export interface Page {
 
 export default [
   {
+    name: "lbt",
+    title: "语言广度测试"
+  },
+  {
+    name: "admin",
+    title: "默识 - 后台"
+  },
+  {
     name: "teacher",
-    title:"默识 - 作者端"
+    title: "默识 - 作者端"
   },
   {
     name: "learner"
-  },
-  {
-    name: "admin"
   }
 ] as Page[];

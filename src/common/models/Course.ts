@@ -1,6 +1,6 @@
 import BitKit from "@/common/kit/BitKit";
 import { GET, POST_FORM, Ret } from "@/common/kit/req";
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 
 import { _ICourse } from "./_db";
 import { IArticle } from "./Article";
@@ -31,7 +31,9 @@ export default class Course implements ICourse {
 
   static from(i: ICourse) {
     const instance = new Course();
-    Object.assign(instance, i);
+    runInAction(() => {
+      Object.assign(instance, i);
+    });
     return instance;
   }
 
@@ -138,45 +140,4 @@ export default class Course implements ICourse {
     COLUMN: 1,
     VIDEO: 2
   });
-}
-
-export class CourseAPI {
-  static async myCourses(): Promise<ICourse[]> {
-    const resp = await GET<ICourse[]>("/course/myByTeacher");
-    return resp.data;
-  }
-
-  static async create(
-    name: string,
-    introduce: string,
-    courseType: number,
-    title: string,
-    content: string
-  ): Promise<Ret> {
-    const resp = await POST_FORM("/course/create", {
-      name,
-      introduce,
-      courseType,
-      title,
-      content
-    });
-    return resp.data;
-  }
-
-  static async fetchById(id: number) {
-    // TODO
-    // const resp = await GET("/course/")
-  }
-
-  static async detail(id: number) {
-    const resp = await GET<{
-      articles: IArticle[];
-    }>("/course/detail", { id });
-    return resp.data;
-  }
-
-  static async update(id: number, items: { [key: string]: number | string }) {
-    const resp = await POST_FORM("/course/update", { id, ...items });
-    return resp.data;
-  }
 }

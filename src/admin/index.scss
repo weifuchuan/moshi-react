@@ -7,7 +7,8 @@ body,
 #root {
   height: 100vh;
   width: 100vw;
-  background-color: #F0F3EF;
+  background-color: #f0f3ef;
+  color:#24292e;
 }
 
 .flex {
@@ -18,12 +19,7 @@ body,
 #root {
   display: flex;
 }
-
-html {
-  color: #000; 
-}
  
-
 body,
 div,
 dl,
@@ -32,21 +28,10 @@ dd,
 ul,
 ol,
 li,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-pre,
 form,
 fieldset,
 input,
-textarea,
-p,
-blockquote,
-th,
-td {
+textarea {
   margin: 0;
   padding: 0;
 }
@@ -86,7 +71,7 @@ th {
 
 q:before,
 q:after {
-  content: '';
+  content: "";
 }
 
 abbr,

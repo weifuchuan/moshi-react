@@ -1,16 +1,15 @@
-import React, { useRef, useState, useContext } from "react";
-import Layout from "@/teacher/layouts/Layout";
-import { Control } from "react-keeper";
 import LoginPanel from "@/common/components/LoginPanel";
-import qs from "qs";
-import Account, { AccountAPI } from "@/common/models/Account";
-import { message } from "antd";
-import "./index.scss";
-import useWindowSize from "@/common/hooks/useWindowSize";
 import useTitle from "@/common/hooks/useTitle";
-import { fetchBase64Image, GET } from "@/common/kit/req";
-import { observer } from "mobx-react-lite";
+import { fetchBase64Image } from "@/common/kit/req";
+import Account from "@/common/models/Account";
+import Layout from "@/teacher/layouts/Layout";
 import { StoreContext } from "@/teacher/store";
+import { message } from "antd";
+import { observer } from "mobx-react-lite";
+import qs from "qs";
+import React, { useContext } from "react";
+import { Control } from "react-keeper";
+import "./index.scss";
  
 function Login( ) {
   useTitle("登录 | 默识 - 作者端");

@@ -1,0 +1,28 @@
+.MediaItem {
+  width: 100%;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+
+  // name ---- uploadAt
+  > :nth-child(1) {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+  }
+
+  // recorder ---- play|delete
+  > :nth-child(2) {
+    display: flex;
+    justify-content: space-between;
+
+    // recorder
+    > :nth-child(1) {
+    }
+
+    // play|delete
+    > :nth-child(2) {
+      display: flex;
+    }
+  }
+}
