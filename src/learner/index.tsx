@@ -4,6 +4,9 @@ import App from "./App";
 import { Provider } from "mobx-react";
 import store from "./store";
 import "./index.scss";
+import EventEmitter from 'wolfy87-eventemitter';
+
+(window as any).bus = new EventEmitter();
 
 ReactDOM.render(
   (

@@ -3,6 +3,9 @@ import * as React from "react";
 import App from "./App";
 import "./index.scss";
 import store, { StoreContext } from "./store";
+import EventEmitter from 'wolfy87-eventemitter';
+
+(window as any).bus = new EventEmitter();
 
 ReactDOM.render(
   <StoreContext.Provider value={store}>

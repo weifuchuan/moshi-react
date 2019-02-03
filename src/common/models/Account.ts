@@ -1,18 +1,18 @@
-import { _IAccount } from "./_db";
-import { GET, Ret, POST_FORM } from "../kit/req";
-import BitKit from "@/common/kit/BitKit";
-import { observable, runInAction } from "mobx";
+import { _IAccount } from './_db';
+import { GET, Ret, POST_FORM, staticBaseUrl } from '../kit/req';
+import BitKit from '@/common/kit/BitKit';
+import { observable, runInAction } from 'mobx';
 
 type IAccount = _IAccount;
 export { IAccount };
 
 export default class Account implements IAccount {
   @observable id: number = 0;
-  @observable nickName: string = "";
-  @observable password: string = "";
-  @observable email: string = "";
+  @observable nickName: string = '';
+  @observable password: string = '';
+  @observable email: string = '';
   @observable phone?: string | undefined;
-  @observable avatar: string = "";
+  @observable avatar: string = '';
   @observable realName?: string | undefined;
   @observable identityNumber?: string | undefined;
   @observable age?: number | undefined;
@@ -38,9 +38,11 @@ export default class Account implements IAccount {
    * APIs
    */
   static async probeLoggedAccount(): Promise<Account> {
-    const resp = await GET<Ret & { account: IAccount }>("/login/probe");
-    if (resp.data.state === "ok") return Account.from(resp.data.account);
-    else throw resp.data.msg;
+    const resp = await GET<Ret & { account: IAccount }>('/login/probe');
+    if (resp.data.state === 'ok') {
+      resp.data.account.avatar = `${staticBaseUrl}${resp.data.account.avatar}`;
+      return Account.from(resp.data.account);
+    } else throw resp.data.msg;
   }
 
   static async login(
@@ -48,12 +50,12 @@ export default class Account implements IAccount {
     password: string,
     captcha: string
   ): Promise<Account> {
-    const resp = await POST_FORM<Ret & { account: IAccount }>("/login", {
+    const resp = await POST_FORM<Ret & { account: IAccount }>('/login', {
       email,
       password,
       captcha
     });
-    if (resp.data.state === "ok") return Account.from(resp.data.account);
+    if (resp.data.state === 'ok') return Account.from(resp.data.account);
     else throw resp.data.msg;
   }
 
@@ -63,25 +65,25 @@ export default class Account implements IAccount {
     password: string,
     captcha: string
   ): Promise<IAccount> {
-    const resp = await POST_FORM<Ret & { account: IAccount }>("/reg", {
+    const resp = await POST_FORM<Ret & { account: IAccount }>('/reg', {
       email,
       nickName,
       password,
       captcha
     });
-    if (resp.data.state === "ok") return Account.from(resp.data.account);
+    if (resp.data.state === 'ok') return Account.from(resp.data.account);
     else throw resp.data.msg;
   }
 
   static async activate(authcode: string) {
-    const resp = await POST_FORM<Ret>("/reg/activate", {
+    const resp = await POST_FORM<Ret>('/reg/activate', {
       authcode
     });
     return resp.data;
   }
 
   static async reSendActivateEmail() {
-    const resp = await GET<Ret>("/reg/reSendActivateEmail");
+    const resp = await GET<Ret>('/reg/reSendActivateEmail');
     return resp.data;
   }
 
@@ -111,4 +113,3 @@ export default class Account implements IAccount {
     }
   });
 }
- 

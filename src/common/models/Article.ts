@@ -21,6 +21,7 @@ export default class Article implements IArticle {
   @observable createAt: number = 0;
   @observable status: number = 0;
   @observable audioId: number = 0;
+  @observable contentType:string='html'; 
 
   // foreign
   @observable comments: ArticleComment[] = [];

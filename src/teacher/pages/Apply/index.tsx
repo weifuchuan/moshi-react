@@ -1,9 +1,8 @@
 import Panel from '@/common/components/Panel';
 import RichEditor from '@/common/components/RichEditor';
 import useTitle from '@/common/hooks/useTitle';
-import { select } from '@/common/kit/req';
-import { IAccount } from '@/common/models/Account';
-import { ApplicationAPI, ApplicationCategory, ApplicationStatus, IApplication } from '@/common/models/Application';
+import { select } from '@/common/kit/req'; 
+import Application, {   IApplication } from '@/common/models/Application';
 import Layout from '@/teacher/layouts/Layout';
 import { Alert, Button, Input, message, Skeleton } from 'antd';
 import BraftEditor, { EditorState } from 'braft-editor';
@@ -31,7 +30,7 @@ function Apply( ) {
     title: `${me.nickName} 申请成为课程作者`,
     content: '',
     createAt: 0,
-    status: ApplicationStatus.STATUS_COMMIT
+    status: Application.STATUS.COMMIT
   } as Partial<IApplication>) as IApplication);
   const [ applicationLoading, setApplicationLoading ] = useState(true);
   const [ descriptionLoading, setDescriptionLoading ] = useState(true);
@@ -40,8 +39,8 @@ function Apply( ) {
 
   useEffect(() => {
     (async () => {
-      const applications = await ApplicationAPI.my(
-        ApplicationCategory.CATEGORY_TEACHER
+      const applications = await Application.my(
+        Application.CATEGORY.TEACHER
       );
       const items = await select<{ key: string; value: string }>(
         '/select',
@@ -59,11 +58,11 @@ function Apply( ) {
         setApplication(applications[0]);        
         const ap: IApplication = applications[0];
         setRawContent(BraftEditor.createEditorState(ap.content)); 
-        if (ap.status === ApplicationStatus.STATUS_COMMIT) {
+        if (ap.status === Application.STATUS.COMMIT) {
           setDisabled(true);
-        } else if (ap.status === ApplicationStatus.STATUS_SUCCESS) {
+        } else if (ap.status === Application.STATUS.PASSED) {
           setDisabled(true);
-        } else if (ap.status === ApplicationStatus.STATUS_FAIL) {
+        } else if (ap.status === Application.STATUS.FAIL) {
           setDisabled(false);
         }
       } else {
@@ -79,7 +78,7 @@ function Apply( ) {
   let alert = null;
   if (
     application.id !== 0 &&
-    application.status === ApplicationStatus.STATUS_COMMIT
+    application.status === Application.STATUS.COMMIT
   ) {
     alert = (
       <Alert
@@ -89,7 +88,7 @@ function Apply( ) {
         type="info"
       />
     );
-  } else if (application.status === ApplicationStatus.STATUS_SUCCESS) {
+  } else if (application.status === Application.STATUS.PASSED) {
     alert = (
       <Alert
         style={{ marginBottom: '1em' }}
@@ -98,7 +97,7 @@ function Apply( ) {
         type="success"
       />
     );
-  } else if (application.status === ApplicationStatus.STATUS_FAIL) {
+  } else if (application.status === Application.STATUS.FAIL) {
     alert = (
       <Alert
         style={{ marginBottom: '1em' }}
@@ -136,11 +135,11 @@ function Apply( ) {
                 <Button
                   style={{ marginTop: '1em' }}
                   onClick={async () => {
-                    const ret = await ApplicationAPI.commit(
+                    const ret = await Application.commit(
                       application.id,
                       application.title,
                       rawContent.toHTML(),
-                      ApplicationCategory.CATEGORY_TEACHER
+                      Application.CATEGORY.TEACHER
                     );
                     if (ret.state === 'ok') {
                       message.success('提交成功');

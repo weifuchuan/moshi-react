@@ -1,8 +1,9 @@
 .NavBar {
   padding: 1em;
   box-shadow: 0px 0px 10px #a8a8a8;
-  background-color: white;
-  
+  background-color: #fff;
+  // background-color: rgb(0, 21, 41);
+  // color: #fff;
   > :nth-child(1) {
     margin-left: auto;
     margin-right: auto;
@@ -11,11 +12,11 @@
     justify-content: space-between;
     width: 100%;
     > :nth-child(1) {
-      font-family: "Microsoft YaHei", "微软雅黑", "MicrosoftJhengHei",
-        "华文细黑", "STHeiti", "MingLiu", "Segoe UI", Tahoma, "Geneva", Verdana,
-        sans-serif;
+      font-family: "STHeiti", "MingLiu", "Segoe UI", Tahoma, "Geneva", Verdana, sans-serif;
       font-size: 1.5em;
       font-weight: bold;
+      display: flex; 
+      align-items: center; 
       // | 分割线
       > :nth-child(2) {
         margin: 0 0.5em;
@@ -24,7 +25,6 @@
     > :nth-child(2) {
       display: flex;
     }
- 
   }
 }
 

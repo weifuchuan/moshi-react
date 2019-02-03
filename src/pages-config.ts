@@ -7,11 +7,7 @@ export interface Page {
   inlineSource?: string; // 正则表达式，代表内联到html中的资源，如：'.(js|css)$'
 }
 
-export default [
-  {
-    name: "lbt",
-    title: "语言广度测试"
-  },
+export default [ 
   {
     name: "admin",
     title: "默识 - 后台"

@@ -1,15 +1,7 @@
 import immediateInterval from "@/common/kit/functions/immediateInterval";
-import {
-  Button,
-  Icon,
-  message,
-  Modal,
-  notification,
-  Spin,
-  Table,
-  InputNumber
-} from "antd";
+import { Button, Icon, InputNumber, message, Modal, notification, Spin, Table } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { ColumnProps } from "antd/lib/table";
 import _ from "lodash";
 import { action, computed, observable } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -22,15 +14,11 @@ import { take } from "rxjs/operators";
 import EventEmitter from "wolfy87-eventemitter";
 import "./App.scss";
 import CEI from "./copy_example_image";
-import { ColumnProps } from "antd/lib/table";
-
-// const MediaStreamRecorder = require('msr');
+ 
 require("./recorder/recorder-core.js");
 require("./recorder/engine/mp3.js");
 require("./recorder/engine/mp3-engine.js");
-declare var Recorder: any;
-require("./jquery.min.js");
-declare var $: any;
+declare var Recorder: any; 
 
 export default observer(function App() {
   useEffect(() => {
@@ -530,7 +518,7 @@ const End = observer(() => {
                 const id = (anchor.id = `download-anchor-${nextId++}`);
                 anchor.href = store.audioDownloadUrl;
                 anchor.download = "测试录音.mp3";
-                $(anchor).attr("style", "display: none;");
+                anchor.style.display = 'none' 
                 document.querySelector("body")!.appendChild(anchor);
                 anchor.click();
               }}
@@ -565,8 +553,9 @@ const End = observer(() => {
             onCancel={() => setShow(false)}
           >
             <Button
-              onClick={() => {
-                $("#export-data-input").select();
+              onClick={() => { 
+                const input = document.getElementById("export-data-input")! as HTMLTextAreaElement; 
+                input.setSelectionRange(0, input.value.length); 
                 document.execCommand("Copy", false);
               }}
               style={{ marginBottom: "1em" }}

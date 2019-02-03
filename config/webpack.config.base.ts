@@ -74,16 +74,12 @@ export default {
   entry: entryBuild(),
   module: {
     // loaders
-    rules: [
+    rules: [ 
       {
-        test: /\.(js)|(jsx)/,
-        exclude: /node_modules/,
-        use: [babelLoader]
-      },
-      {
-        test: /\.(ts)|(tsx)/,
+        test: /\.(ts)|(tsx)|(js)|(jsx)/,
         exclude: /node_modules/,
         use: [
+          "thread-loader",
           babelLoader
           // {
           //   loader: "ts-loader",

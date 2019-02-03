@@ -44,7 +44,8 @@ const Article: FunctionComponent<Props> = ({ params }) => {
           content: "",
           createAt: 0,
           status: 0,
-          audioId: 0
+          audioId: 0,
+          contentType:"html"
         })
       : articles.find(a => a.id === id)!;
   const audios = store.audios;

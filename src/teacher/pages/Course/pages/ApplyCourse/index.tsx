@@ -2,7 +2,7 @@ import Panel from "@/common/components/Panel";
 import RichEditor from "@/common/components/RichEditor";
 import useTitle from "@/common/hooks/useTitle";
 import { select } from "@/common/kit/req";
-import { ApplicationStatus, IApplication } from "@/common/models/Application";
+import Application, {  IApplication } from "@/common/models/Application";
 import Course, { ICourse } from "@/common/models/Course";
 import { StoreContext } from "@/teacher/store";
 import { Button, Input, message, Select } from "antd";
@@ -44,7 +44,7 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
     title: `${me.nickName} 申请创建课程《${course.name}》`,
     content: "",
     createAt: 0,
-    status: ApplicationStatus.STATUS_COMMIT
+    status: Application.STATUS.COMMIT
   } as Partial<IApplication>) as IApplication);
   const [introduce, setIntroduce] = useState(
     BraftEditor.createEditorState(null)

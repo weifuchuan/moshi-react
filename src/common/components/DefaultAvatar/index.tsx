@@ -1,18 +1,27 @@
-import React from "react";
-import { Avatar } from "antd";
-import { AvatarProps } from "antd/lib/avatar";
+import React from 'react';
+import { Avatar } from 'antd';
+import { AvatarProps } from 'antd/lib/avatar';
+import { staticBaseUrl } from '@/common/kit/req';
 
 export default function DefaultAvatar(
-  props: { avatar?: string } & AvatarProps
+  props: { avatar?: string; onClick?: () => void } & AvatarProps
 ) {
-  const { avatar, ...otherProps } = props;
+  let { avatar, onClick, ...otherProps } = props;
+
+  if (__DEV__) {
+    if (avatar && avatar.startsWith('/static')) {
+      avatar = staticBaseUrl + avatar;
+    }
+  }
 
   return (
-    <Avatar
-      style={{ cursor: "pointer" }}
-      shape="square"
-      {...(avatar ? { src: avatar } : { icon: "user" })}
-      {...otherProps}
-    />
+    <div onClick={onClick}>
+      <Avatar
+        style={{ cursor: 'pointer' }}
+        shape="square"
+        {...(avatar ? { src: avatar } : { icon: 'user' })}
+        {...otherProps}
+      />
+    </div>
   );
 }
