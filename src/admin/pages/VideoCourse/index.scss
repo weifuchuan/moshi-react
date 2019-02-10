@@ -1,0 +1,13 @@
+.VideoCourse{ 
+  width: 100%;
+  padding: 1em;
+  background-color: #fff;
+  margin-top: 1em;
+  
+  .Actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 1em;
+  }
+}

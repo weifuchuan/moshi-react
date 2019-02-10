@@ -41,12 +41,35 @@ export const routes: RouteConfig[] = [
           {
             path: '/column',
             component: () => import('./pages/Column'),
-            name: '专栏课程'
+            name: '专栏课程',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/:id',
+                component: () => import('./pages/Column/pages/ArticlePage'),
+                name: '文章管理'
+              }
+            ]
           },
           {
             path: '/video',
             component: () => import('./pages/VideoCourse'),
-            name: '视频课程'
+            name: '视频课程',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/:id',
+                component: () =>
+                  import('./pages/VideoCourse/pages/SectionPage'),
+                name: '章节管理'
+              }
+            ]
+          },
+          {
+            path: '/:id/issue',
+            component: () => import('./pages/Issue'),
+            hideInMenu: true,
+            name: 'Issue管理'
           }
         ]
       },
@@ -76,6 +99,16 @@ export const routes: RouteConfig[] = [
             cache: true
           }
         ]
+      },
+      {
+        path: '/subscription',
+        component: () => import('./pages/Subscription'),
+        name: '订阅管理'
+      },
+      {
+        path: '/preset-text',
+        component: () => import('./pages/PresetText'),
+        name: '预设文本管理'
       },
       {
         path: '/media',

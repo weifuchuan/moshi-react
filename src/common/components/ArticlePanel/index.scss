@@ -1,0 +1,27 @@
+.ArticlePanel {
+  width: 100%;
+  background-color: #fff;
+
+  .Title {
+    color: #353535;
+    font-weight: 700;
+    line-height: 30px;
+    font-size: 22px;
+  }
+
+  .AuthorInfo {
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 1em;
+  }
+
+  p{
+    font-weight: 400;
+    color: #353535;
+    margin-top: 0;
+    margin-bottom: 30px;
+    word-break: break-word;
+  }
+}

@@ -1,19 +1,19 @@
-import qs from "qs";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import EventEmitter from "wolfy87-eventemitter";
-import { fromEvent } from "rxjs";
+import qs from 'qs';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import EventEmitter from 'wolfy87-eventemitter';
+import { fromEvent } from 'rxjs';
 
-let baseUrl = "";
-let staticBaseUrl = "";
+let baseUrl = '';
+let staticBaseUrl = '';
 if (__DEV__) {
-  baseUrl = "/api";
-  staticBaseUrl = "http://localhost:8080";
+  baseUrl = '/api';
+  staticBaseUrl = 'http://localhost:8080';
 }
 
 export { baseUrl, staticBaseUrl };
 
 export interface Ret {
-  state: "ok" | "fail";
+  state: 'ok' | 'fail';
 
   [key: string]: any;
 }
@@ -23,7 +23,7 @@ export async function GET<Result = Ret>(
   params?: any,
   config?: AxiosRequestConfig
 ): Promise<AxiosResponse<Result>> {
-  uri = params ? uri + "?" + qs.stringify(params) : uri;
+  uri = params ? uri + '?' + qs.stringify(params) : uri;
   return await axios.get(`${baseUrl}${uri}`, config);
 }
 
@@ -42,7 +42,7 @@ export async function POST_FORM<Result = Ret>(
 ): Promise<AxiosResponse<Result>> {
   const resp = await POST<Result>(uri, qs.stringify(form), {
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     },
     ...config
   });
@@ -50,10 +50,10 @@ export async function POST_FORM<Result = Ret>(
 }
 
 export async function fetchBase64Image(uri: string): Promise<string> {
-  let resp = await GET<Blob>(uri, null, { responseType: "blob" });
+  let resp = await GET<Blob>(uri, null, { responseType: 'blob' });
   let reader = new FileReader();
-  return await new Promise(resolve => {
-    reader.onloadend = e => {
+  return await new Promise((resolve) => {
+    reader.onloadend = (e) => {
       resolve(reader.result as string);
     };
     reader.readAsDataURL(resp.data);
@@ -61,32 +61,36 @@ export async function fetchBase64Image(uri: string): Promise<string> {
 }
 
 export async function select<T = object>(
-  uri: "/select" | "/select/teacher" | "/select/manager",
+  uri: '/select' | '/select/teacher' | '/select/manager',
   sql: string,
   ...args: any[]
 ): Promise<T[]> {
-  let resp = await POST<T[]>(uri, { sql, args }, { responseType: "json" });
+  let resp = await POST<T[]>(uri, { sql, args }, { responseType: 'json' });
   return resp.data;
 }
 
 export function upload(
   files: (File | Blob)[],
   otherParams: object = {},
-  action: string = "/file/upload"
+  action: string = '/file/upload'
 ) {
   const form = new FormData();
   for (let file of files) {
-    form.append("file", file);
+    form.append('file', file);
   }
   for (let key in otherParams) {
     form.append(key, otherParams[key]);
   }
   const uploadProgress = new EventEmitter();
-  const progress = fromEvent<number>(uploadProgress, "uploadProgress");
+  const progress = fromEvent<number>(uploadProgress, 'uploadProgress');
   const response = axios.post(`${baseUrl}${action}`, form, {
-    onUploadProgress: evt => {
-      let completed = Math.round((evt.loaded * 100) / evt.total);
-      uploadProgress.emit("uploadProgress", completed);
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    onUploadProgress: (evt) => {
+      let completed = Math.round(evt.loaded * 100 / evt.total);
+      uploadProgress.emit('uploadProgress', completed);
     }
   });
   return {

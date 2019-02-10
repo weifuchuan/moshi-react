@@ -1,0 +1,35 @@
+.PresetText{
+  
+  width: 100%;
+  padding: 1em;
+  background-color: #fff;
+  margin-top: 1em;
+
+  .Actions{
+    width:100%;
+    display: flex; 
+    justify-content: flex-end; 
+    margin: 0 0 1em; 
+    
+  }
+  
+  .Options{
+    width: 100%; 
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center; 
+    border-bottom: 1px solid rgb(240, 238, 238);
+    padding-bottom: 0.5em;
+  }
+  
+  
+}
+
+.BigModal{
+  min-width: 800px;
+  max-width: 1024px;
+}
+
+.ant-form-item-label{
+  text-align: left !important;
+}

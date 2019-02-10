@@ -2,7 +2,7 @@ import { Button, Form, Input, message, DatePicker } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import React from "react";
 import { IAccount } from "@/common/models/Account";
-import "./AccountForm.scss";
+import './forms.scss'
 import _AvatarSelector from "@/common/components/AvatarSelector";
 import { upload, Ret } from "@/common/kit/req";
 import moment from "moment";

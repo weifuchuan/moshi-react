@@ -25,6 +25,7 @@ export default class Account implements IAccount {
   @observable profession?: string | undefined;
   @observable createAt: number = 0;
   @observable status: number = 0;
+  @observable realPictrue?: string;
 
   static from(i: IAccount) {
     const instance = new Account();

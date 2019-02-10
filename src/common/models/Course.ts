@@ -1,19 +1,24 @@
-import BitKit from "@/common/kit/BitKit";
-import { GET, POST_FORM, Ret } from "@/common/kit/req";
-import { observable, runInAction } from "mobx";
+import BitKit from '@/common/kit/BitKit';
+import { GET, POST_FORM, Ret } from '@/common/kit/req';
+import { observable, runInAction } from 'mobx';
 
-import { _ICourse } from "./_db";
-import { IArticle } from "./Article";
-import Issue, { IIssue } from "./Issue";
-import Article from "@/common/models/Article";
+import { _ICourse } from './_db';
+import { IArticle } from './Article';
+import Issue, { IIssue } from './Issue';
+import Article from '@/common/models/Article';
 
-export type ICourse = _ICourse;
+// export type ICourse = _ICourse;
+
+export interface ICourse extends _ICourse {
+  nickName?: string;
+  avatar?: string;
+}
 
 export default class Course implements ICourse {
   @observable id: number = 0;
   @observable accountId: number = 0;
-  @observable name: string = "";
-  @observable introduce: string = "";
+  @observable name: string = '';
+  @observable introduce: string = '';
   @observable introduceImage?: string | undefined;
   @observable note?: string | undefined;
   @observable createAt: number = 0;
@@ -24,6 +29,10 @@ export default class Course implements ICourse {
   @observable discountedPrice?: number | undefined;
   @observable offerTo?: number | undefined;
   @observable status: number = 0;
+  @observable lectureCount: number = 0;
+
+  @observable nickName?: string;
+  @observable avatar?: string;
 
   // foreign
   // @observable issues: Issue[] = [];
@@ -45,9 +54,9 @@ export default class Course implements ICourse {
   }
 
   async update(items: Partial<ICourse>) {
-    const resp = await POST_FORM("/course/update", { id: this.id, ...items });
+    const resp = await POST_FORM('/course/update', { id: this.id, ...items });
     const ret = resp.data;
-    if (ret.state == "ok") {
+    if (ret.state == 'ok') {
       Object.assign(this, items);
       return;
     } else {
@@ -60,7 +69,7 @@ export default class Course implements ICourse {
    */
 
   static async myCourses(): Promise<Course[]> {
-    const resp = await GET<ICourse[]>("/course/myByTeacher");
+    const resp = await GET<ICourse[]>('/course/myByTeacher');
     return resp.data.map(Course.from);
   }
 
@@ -71,7 +80,7 @@ export default class Course implements ICourse {
     title: string,
     content: string
   ): Promise<Course> {
-    const resp = await POST_FORM("/course/create", {
+    const resp = await POST_FORM('/course/create', {
       name,
       introduce,
       courseType,
@@ -87,7 +96,8 @@ export default class Course implements ICourse {
       introduce,
       courseType,
       buyerCount: 0,
-      accountId
+      accountId,
+      lectureCount:0
     });
   }
 
@@ -100,7 +110,7 @@ export default class Course implements ICourse {
     const resp = await GET<{
       articles: IArticle[];
       issues: IIssue[];
-    }>("/course/detail", { id });
+    }>('/course/detail', { id });
     const { articles, issues } = resp.data;
     return observable({
       articles: articles.map(Article.from),
@@ -109,7 +119,7 @@ export default class Course implements ICourse {
   }
 
   static async update(id: number, items: { [key: string]: number | string }) {
-    const resp = await POST_FORM("/course/update", { id, ...items });
+    const resp = await POST_FORM('/course/update', { id, ...items });
     return resp.data;
   }
 

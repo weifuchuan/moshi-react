@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { DatePicker } from "antd";
-import moment from "moment";
-import { DatePickerProps } from "antd/lib/date-picker/interface";
+import React, { Component } from 'react';
+import { DatePicker } from 'antd';
+import moment from 'moment';
+import { DatePickerProps } from 'antd/lib/date-picker/interface';
 
 export default class DatePickerButTime extends Component<
   {
-    value: number;
-    onChange: (value: number) => void;
+    value?: number;
+    onChange?: (value: number) => void;
   } & DatePickerProps
 > {
   render() {
@@ -15,8 +15,8 @@ export default class DatePickerButTime extends Component<
         {...this.props}
         allowClear={false}
         value={moment(this.props.value)}
-        onChange={v => { 
-          this.props.onChange(v.toDate().getTime());
+        onChange={(v) => {
+          this.props.onChange && this.props.onChange(v.toDate().getTime());
         }}
       />
     );

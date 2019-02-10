@@ -8,6 +8,7 @@ export type IIssue = _IIssue & {
   nickName: string;
   avatar: string;
   commentCount: number;
+  
 };
 
 export type IIssueComment = _IIssueComment & {

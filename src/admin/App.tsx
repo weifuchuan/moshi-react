@@ -3,6 +3,7 @@ import { HashRouter, Route } from "react-keeper";
 import "./App.scss";
 import routes from "./router.config";
 import { StoreContext } from "./store/index";
+import MarkdownEditor from '@/common/components/MarkdownEditor'; 
 
 const Router = HashRouter;
 
@@ -16,6 +17,7 @@ class App extends React.Component {
         <div className={"container"}>
           {routes}
           <Route miss component={() => <div>404</div>} />
+          <Route path={"/md"} component={()=><div style={{padding:"5em"}}  ><MarkdownEditor /></div>} ></Route>
         </div>
       </Router>
     );

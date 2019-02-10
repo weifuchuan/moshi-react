@@ -24,11 +24,16 @@ function NavBar({ toLogin, toReg }: Props) {
   let [ breadcrumb, setBreadcrumb ] = useState<JSX.Element>(<Breadcrumb />);
 
   const f = () => {
-    const paths = Control.path.slice(1).split('/').filter(x=>!!x);
+    const paths = Control.path.slice(1).split('/').filter((x) => !!x);
     let rs = routes;
     let prev = '';
     const items = paths.map((path) => {
-      const r = rs.find((r) => path.startsWith(r.path.slice(1)))!;
+      const r = rs.find((r) => {
+        if (r.path.startsWith('/:')) {
+          return true;
+        }
+        return path.startsWith(r.path.slice(1));
+      })!;
       rs = r.routes!;
       return (
         <Breadcrumb.Item key={path}>
@@ -40,7 +45,7 @@ function NavBar({ toLogin, toReg }: Props) {
   };
 
   useEffect(() => {
-    f(); 
+    f();
     bus.addListener('routePathChange', f);
     return () => {
       bus.removeListener('routePathChange', f);

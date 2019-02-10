@@ -18,5 +18,9 @@ export default [
   },
   {
     name: "learner"
-  }
+  },
+  // {
+  //   name:"lbt",
+  //   title:"语言广度测试"
+  // }
 ] as Page[];

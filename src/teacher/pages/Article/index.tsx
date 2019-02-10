@@ -1,15 +1,15 @@
-import { PopCommentEditor } from "@/common/components/CommentEditor";
-import DefaultAvatar from "@/common/components/DefaultAvatar";
-import Expandable from "@/common/components/Expandable";
-import MarkdownDiv from "@/common/components/MarkdownDiv";
-import Panel from "@/common/components/Panel";
-import RichEditor from "@/common/components/RichEditor";
-import useTitle from "@/common/hooks/useTitle";
-import { fromNow, formatTime } from "@/common/kit/functions/moments";
-import ArticleModel, { ArticleComment } from "@/common/models/Article";
-import Audio from "@/common/models/Audio";
-import Layout from "@/teacher/layouts/Layout";
-import { StoreContext } from "@/teacher/store";
+import { PopCommentEditor } from '@/common/components/CommentEditor';
+import DefaultAvatar from '@/common/components/DefaultAvatar';
+import Expandable from '@/common/components/Expandable';
+import MarkdownDiv from '@/common/components/MarkdownDiv';
+import Panel from '@/common/components/Panel';
+import RichEditor from '@/common/components/RichEditor';
+import useTitle from '@/common/hooks/useTitle';
+import { fromNow, formatTime } from '@/common/kit/functions/moments';
+import ArticleModel, { ArticleComment } from '@/common/models/Article';
+import Audio from '@/common/models/Audio';
+import Layout from '@/teacher/layouts/Layout';
+import { StoreContext } from '@/teacher/store';
 import {
   Button,
   Input,
@@ -18,12 +18,12 @@ import {
   Popconfirm,
   Select,
   Skeleton
-} from "antd";
-import BraftEditor from "braft-editor";
-import { observer, useObservable } from "mobx-react-lite";
-import React, { FunctionComponent, useContext, useEffect, useRef } from "react";
-import { Link, Control } from "react-keeper";
-import "./index.scss";
+} from 'antd';
+import BraftEditor from 'braft-editor';
+import { observer, useObservable } from 'mobx-react-lite';
+import React, { FunctionComponent, useContext, useEffect, useRef } from 'react';
+import { Link, Control } from 'react-keeper';
+import './index.scss';
 
 interface Props {
   params: {
@@ -34,20 +34,26 @@ interface Props {
 const Article: FunctionComponent<Props> = ({ params }) => {
   const store = useContext(StoreContext);
   const articles = store.articles;
-  const id = params.id === "create" ? 0 : Number.parseInt(params.id);
+  const id = params.id === 'create' ? 0 : Number.parseInt(params.id);
+  if (params.id === 'create' && !Control.state.courseId) {
+    setTimeout(() => {
+      alert('必须从/course页跳转才能创建文章');
+      Control.go('/course');
+    }, 30);
+  }
   const article: ArticleModel | undefined =
     id === 0
       ? ArticleModel.from({
           id,
           courseId: Control.state.courseId,
-          title: "",
-          content: "",
+          title: '',
+          content: '',
           createAt: 0,
           status: 0,
           audioId: 0,
-          contentType:"html"
+          contentType: 'html'
         })
-      : articles.find(a => a.id === id)!;
+      : articles.find((a) => a.id === id)!;
   const audios = store.audios;
 
   const audioId = useObservable({ value: article ? article.audioId : 0 });
@@ -59,7 +65,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
     (async () => {
       if (!article) {
         const article = await ArticleModel.fetch(id);
-        audioId.value=article.audioId; 
+        audioId.value = article.audioId;
         store.articles.push(article);
       }
     })();
@@ -71,13 +77,16 @@ const Article: FunctionComponent<Props> = ({ params }) => {
     })();
   }, []);
 
-  useEffect(() => {
-    if (id !== 0 && article && article.comments.length === 0) {
-      article.fetchComments();
-    }
-  }, [article]);
+  useEffect(
+    () => {
+      if (id !== 0 && article && article.comments.length === 0) {
+        article.fetchComments();
+      }
+    },
+    [ article ]
+  );
 
-  useTitle(`${article ? article.title : "文章"} | 默识 - 作者端`);
+  useTitle(`${article ? article.title : '文章'} | 默识 - 作者端`);
 
   // const [content, setContent] = useState("");
 
@@ -86,32 +95,30 @@ const Article: FunctionComponent<Props> = ({ params }) => {
   }
 
   const replies = article.comments
-    .filter(c => !!c.replyTo)
+    .filter((c) => !!c.replyTo)
     .reduce((map, c) => ((map[c.replyTo!] = c), map), {} as {
       [replyTo: number]: ArticleComment;
     });
-  const comments = article.comments
-    .filter(c => !!!c.replyTo)
-    .sort((a, b) => {
-      if (
-        a.status === ArticleComment.STATUS.TOP &&
-        b.status === ArticleComment.STATUS.ORDINARY
-      ) {
-        return -1;
-      } else if (
-        a.status === ArticleComment.STATUS.ORDINARY &&
-        b.status === ArticleComment.STATUS.TOP
-      ) {
-        return 1;
-      }
-      if (a.createAt > b.createAt) {
-        return -1;
-      } else if (a.createAt === b.createAt) {
-        return 0;
-      } else {
-        return 1;
-      }
-    });
+  const comments = article.comments.filter((c) => !!!c.replyTo).sort((a, b) => {
+    if (
+      a.status === ArticleComment.STATUS.TOP &&
+      b.status === ArticleComment.STATUS.ORDINARY
+    ) {
+      return -1;
+    } else if (
+      a.status === ArticleComment.STATUS.ORDINARY &&
+      b.status === ArticleComment.STATUS.TOP
+    ) {
+      return 1;
+    }
+    if (a.createAt > b.createAt) {
+      return -1;
+    } else if (a.createAt === b.createAt) {
+      return 0;
+    } else {
+      return 1;
+    }
+  });
   for (let i = comments.length - 1; i > -1; i--) {
     const c = comments[i];
     if (replies[c.id]) {
@@ -123,40 +130,40 @@ const Article: FunctionComponent<Props> = ({ params }) => {
     <Layout>
       <div className="Article">
         <div>
-          <Panel style={{ flexBasis: "70vw", height: "fit-content" }}>
+          <Panel style={{ flexBasis: '70vw', height: 'fit-content' }}>
             <div>
               <Input
                 defaultValue={article.title}
                 ref={titleInput}
-                style={{ marginBottom: "1em" }}
+                style={{ marginBottom: '1em' }}
               />
-              <div style={{ width: "100%", marginBottom: "1em" }}>
-                请选择此文章的录音文件：<Link to={"/media"}>去上传</Link>
+              <div style={{ width: '100%', marginBottom: '1em' }}>
+                请选择此文章的录音文件：<Link to={'/media'}>去上传</Link>
                 <Select
                   defaultValue={article.audioId}
-                  onChange={id => (audioId.value = id)}
-                  style={{ width: "100%" }}
+                  onChange={(id) => (audioId.value = id)}
+                  style={{ width: '100%' }}
                 >
-                  <Select.Option key={"0"} title={"无"} value={0}>
+                  <Select.Option key={'0'} title={'无'} value={0}>
                     无
                   </Select.Option>
-                  {audios.map(audio => {
+                  {audios.map((audio) => {
                     return (
                       <Select.Option
                         key={audio.id.toString()}
                         title={
                           audio.name +
-                          " / " +
+                          ' / ' +
                           audio.recorder +
-                          " / " +
+                          ' / ' +
                           formatTime(audio.uploadAt)
                         }
                         value={audio.id}
                       >
                         {audio.name +
-                          " / " +
+                          ' / ' +
                           audio.recorder +
-                          " / " +
+                          ' / ' +
                           formatTime(audio.uploadAt)}
                       </Select.Option>
                     );
@@ -165,7 +172,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
               </div>
               <RichEditor
                 defaultValue={BraftEditor.createEditorState(article.content)}
-                style={{ marginBottom: "1em", height: "auto" }}
+                style={{ marginBottom: '1em', height: 'auto' }}
                 editorRef={editor}
               />
               <Button
@@ -189,7 +196,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                   } else {
                     try {
                       await article.update();
-                      message.success("更新成功");
+                      message.success('更新成功');
                     } catch (err) {
                       message.error(err);
                     }
@@ -201,7 +208,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
             </div>
           </Panel>
           <Panel
-            style={{ flexBasis: "30vw", marginLeft: "0", overflowY: "auto" }}
+            style={{ flexBasis: '30vw', marginLeft: '0', overflowY: 'auto' }}
           >
             <List
               bordered={true}
@@ -209,12 +216,12 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                 <div>
                   <PopCommentEditor
                     buttonProps={{
-                      children: "评论",
-                      type: "primary",
+                      children: '评论',
+                      type: 'primary',
                       disabled: id === 0
                     }}
-                    initContent={""}
-                    onOk={async content => {
+                    initContent={''}
+                    onOk={async (content) => {
                       await article.comment(store.me!, content);
                     }}
                   />
@@ -227,12 +234,12 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                       actions={[
                         <PopCommentEditor
                           buttonProps={{
-                            className: "action",
-                            children: "回复"
+                            className: 'action',
+                            children: '回复'
                           }}
-                          okText={"回复"}
-                          initContent={""}
-                          onOk={async content => {
+                          okText={'回复'}
+                          initContent={''}
+                          onOk={async (content) => {
                             await article.comment(
                               store.me!,
                               content,
@@ -241,7 +248,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                           }}
                         />,
                         <Button
-                          className={"action"}
+                          className={'action'}
                           onClick={() => {
                             comment.updateStatus(
                               comment.status === ArticleComment.STATUS.ORDINARY
@@ -250,16 +257,18 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                             );
                           }}
                         >
-                          {comment.status === ArticleComment.STATUS.ORDINARY
-                            ? "置顶"
-                            : "取消置顶"}
+                          {comment.status === ArticleComment.STATUS.ORDINARY ? (
+                            '置顶'
+                          ) : (
+                            '取消置顶'
+                          )}
                         </Button>,
                         <Popconfirm
                           title="确认删除此评论?"
                           onConfirm={async () => {
                             try {
                               await article.removeComment(comment.id);
-                              message.success("删除成功");
+                              message.success('删除成功');
                             } catch (err) {
                               message.error(err);
                             }
@@ -268,7 +277,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                           okText="Yes"
                           cancelText="No"
                         >
-                          <Button className={"action"}>删除</Button>
+                          <Button className={'action'}>删除</Button>
                         </Popconfirm>
                       ]}
                     >
@@ -295,14 +304,14 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                 else
                   return (
                     <List.Item
-                      style={{ backgroundColor: "#f0f3ef" }}
+                      style={{ backgroundColor: '#f0f3ef' }}
                       actions={[
                         <Popconfirm
                           title="确认删除此评论?"
                           onConfirm={async () => {
                             try {
                               await article.removeComment(comment.id);
-                              message.success("删除成功");
+                              message.success('删除成功');
                             } catch (err) {
                               message.error(err);
                             }
@@ -311,7 +320,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                           okText="Yes"
                           cancelText="No"
                         >
-                          <Button className={"action"}>删除</Button>
+                          <Button className={'action'}>删除</Button>
                         </Popconfirm>
                       ]}
                     >
@@ -324,7 +333,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                         <Expandable height={160}>
                           <MarkdownDiv
                             md={comment.content}
-                            style={{ backgroundColor: "#fff" }}
+                            style={{ backgroundColor: '#fff' }}
                           />
                         </Expandable>
                       )}
@@ -332,7 +341,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                   );
               }}
               dataSource={comments}
-              itemLayout={"vertical"}
+              itemLayout={'vertical'}
             />
           </Panel>
         </div>
@@ -342,3 +351,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
 };
 
 export default observer(Article);
+
+if(__DEV__){
+  (window as any).columns = require("./columns.js").default; 
+}

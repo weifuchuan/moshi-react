@@ -2,8 +2,9 @@ import AccountForm from '@/admin/components/forms/AccountForm';
 import {
   OptionalCell,
   OptionalTimeCell,
-  TimeCell
-} from '@/admin/components/tables';
+  TimeCell,
+  TextCell
+} from '@/common/components/tables';
 import { StoreContext } from '@/admin/store';
 import Modal from '@/common/components/Modal';
 import BitKit from '@/common/kit/BitKit';
@@ -57,6 +58,7 @@ const User: FunctionComponent = ({ children }) => {
   return (
     <div className={'User'}>
       <ReactTable
+        sortable={false}
         data={accounts.slice()}
         columns={accountColumns}
         pageSize={pageSize}
@@ -73,8 +75,7 @@ export default observer(User);
 const accountColumns: Column<IAccount>[] = [
   {
     Header: '操作',
-    accessor: 'id',
-    Cell: ({ value, original }) => {
+    Cell: ({ original }) => {
       return (
         <ButtonGroup>
           <Tooltip placement="top" title={'更新'}>
@@ -180,15 +181,18 @@ const accountColumns: Column<IAccount>[] = [
   },
   {
     Header: 'id',
-    accessor: 'id'
+    accessor: 'id',
+    Cell: TextCell
   },
   {
     Header: '昵称',
-    accessor: 'nickName'
+    accessor: 'nickName',
+    Cell: TextCell
   },
   {
     Header: '邮箱',
-    accessor: 'email'
+    accessor: 'email',
+    Cell: TextCell
   },
   {
     Header: '手机',
@@ -197,7 +201,8 @@ const accountColumns: Column<IAccount>[] = [
   },
   {
     Header: '头像',
-    accessor: 'avatar'
+    accessor: 'avatar',
+    Cell: TextCell
   },
   {
     Header: '真名',
@@ -297,7 +302,7 @@ const PatchRoles = observer(({ account }: { account: IAccount }) => {
                   });
                   const ret = resp.data;
                   if (ret.state === 'ok') {
-                    account.status=status;
+                    account.status = status;
                   } else {
                     message.error(ret.msg);
                   }
@@ -331,7 +336,7 @@ const PatchRoles = observer(({ account }: { account: IAccount }) => {
                   });
                   const ret = resp.data;
                   if (ret.state === 'ok') {
-                    account.status=status;
+                    account.status = status;
                   } else {
                     message.error(ret.msg);
                   }
@@ -365,7 +370,7 @@ const PatchRoles = observer(({ account }: { account: IAccount }) => {
                   });
                   const ret = resp.data;
                   if (ret.state === 'ok') {
-                    account.status=status;
+                    account.status = status;
                   } else {
                     message.error(ret.msg);
                   }
