@@ -18,6 +18,7 @@ export default class Course implements ICourse {
   @observable id: number = 0;
   @observable accountId: number = 0;
   @observable name: string = '';
+  @observable shortIntro: string = '';
   @observable introduce: string = '';
   @observable introduceImage?: string | undefined;
   @observable note?: string | undefined;
@@ -93,6 +94,7 @@ export default class Course implements ICourse {
       createAt: courseCreateAt,
       status: Course.STATUS.INIT,
       name,
+      shortIntro:'',
       introduce,
       courseType,
       buyerCount: 0,

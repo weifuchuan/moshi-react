@@ -9,7 +9,7 @@ import { IAudio } from './Audio';
 export interface IArticle extends _IArticle {
   nickName?: string;
   avatar?: string;
-  courseName?:string; 
+  courseName?: string;
   audio?: {
     recorder: string;
     resource: string;
@@ -35,7 +35,7 @@ export default class Article implements IArticle {
 
   @observable nickName?: string;
   @observable avatar?: string;
-  @observable courseName?:string; 
+  @observable courseName?: string;
   @observable
   audio?: {
     recorder: string;
@@ -193,6 +193,7 @@ export default class Article implements IArticle {
     INIT: 0,
     LOCK: 1,
     PUBLISH: 1 << 1,
+    OPEN: 1 << 2,
     isInit(article: IArticle) {
       return article.status === 0;
     },
@@ -201,6 +202,9 @@ export default class Article implements IArticle {
     },
     isPublish(article: IArticle) {
       return BitKit.at(article.status, 1) === 1;
+    },
+    isOpen(article: IArticle) {
+      return BitKit.at(article.status, 2) === 1;
     }
   });
 }
@@ -253,7 +257,6 @@ export class ArticleComment implements IArticleComment {
   });
 }
 
-
-if(__DEV__){
-  (window as any).Article = Article; 
+if (__DEV__) {
+  (window as any).Article = Article;
 }
