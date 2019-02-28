@@ -47,6 +47,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
           id,
           courseId: Control.state.courseId,
           title: '',
+          summary: '',
           content: '',
           createAt: 0,
           status: 0,
@@ -59,6 +60,7 @@ const Article: FunctionComponent<Props> = ({ params }) => {
   const audioId = useObservable({ value: article ? article.audioId : 0 });
 
   const titleInput = useRef<Input>(null);
+  const summaryInput = useRef<Input>(null);
   const editor = useRef<BraftEditor>(null);
 
   useEffect(() => {
@@ -87,8 +89,6 @@ const Article: FunctionComponent<Props> = ({ params }) => {
   );
 
   useTitle(`${article ? article.title : '文章'} | 默识 - 作者端`);
-
-  // const [content, setContent] = useState("");
 
   if (!article) {
     return <Skeleton active />;
@@ -134,7 +134,14 @@ const Article: FunctionComponent<Props> = ({ params }) => {
             <div>
               <Input
                 defaultValue={article.title}
+                placeholder="标题"
                 ref={titleInput}
+                style={{ marginBottom: '1em' }}
+              />
+              <Input
+                defaultValue={article.summary}
+                placeholder="摘要"
+                ref={summaryInput}
                 style={{ marginBottom: '1em' }}
               />
               <div style={{ width: '100%', marginBottom: '1em' }}>
@@ -179,12 +186,14 @@ const Article: FunctionComponent<Props> = ({ params }) => {
                 type="primary"
                 onClick={async () => {
                   article.title = titleInput.current!.input.value;
+                  article.summary = summaryInput.current!.input.value;
                   article.content = editor.current!.getValue().toHTML();
                   article.audioId = audioId.value;
                   if (article.id === 0) {
                     try {
                       await ArticleModel.create(
                         article.title,
+                        article.summary,
                         article.content,
                         article.courseId,
                         article.audioId
@@ -352,6 +361,6 @@ const Article: FunctionComponent<Props> = ({ params }) => {
 
 export default observer(Article);
 
-if(__DEV__){
-  (window as any).columns = require("./columns.js").default; 
+if (__DEV__) {
+  (window as any).columns = require('./columns.js').default;
 }

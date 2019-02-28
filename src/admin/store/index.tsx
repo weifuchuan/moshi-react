@@ -179,6 +179,7 @@ export class Store extends EventEmitter {
         select a.*, u.nickName, u.avatar, c.name courseName
         from article_m a, course_m c, account_m u
         where a.courseId = ? and a.courseId = c.id and u.id = c.accountId
+        order by a.createAt desc
       `,
       courseId
     );

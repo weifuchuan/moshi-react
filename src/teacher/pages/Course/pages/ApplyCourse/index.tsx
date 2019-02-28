@@ -30,12 +30,14 @@ const ApplyCourse: FunctionComponent<Props> = ({}) => {
     discountedPrice: 0,
     id: 0,
     introduce: "", // *
+    shortIntro:"", 
     introduceImage: "",
     note: "",
     offerTo: 0,
     price: 0,
     publishAt: 0,
-    status: Course.STATUS.INIT
+    status: Course.STATUS.INIT,
+    lectureCount:0, 
   });
   const [application, setApplication] = useState<IApplication>(({
     id: 0,

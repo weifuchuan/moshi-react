@@ -58,29 +58,7 @@ export class CommentEditor extends Component<CommentEditorProps> {
           generateMarkdownPreview={md =>
             markdownToHtml(md).then(html => (this.preview(), html))
           }
-        />
-        {/* <div className="Upload" onClick={this.upload}>
-          <input
-            accept=".gif,.jpeg,.jpg,.png,.docx,.gz,.log,.pdf,.pptx,.txt,.xlsx,.zip"
-            type="file"
-            multiple={true}
-            aria-label="Attach files to your comment"
-            ref={e => (this.input = e)}
-          />
-          <span>
-            上传文件（.gif,.jpeg,.jpg,.png,.docx,.gz,.log,.pdf,.pptx,.txt,.xlsx,.zip）
-          </span>
-          <Modal
-            title="Basic Modal"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-          </Modal>
-        </div> */}
+        /> 
         <div className="BottomBar">
           <a
             href="https://guides.github.com/features/mastering-markdown/"

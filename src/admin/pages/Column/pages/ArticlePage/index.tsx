@@ -15,7 +15,7 @@ import { Tooltip, Button, message, Switch } from 'antd';
 import Modal from '@/common/components/Modal';
 import ArticlePanel from '@/common/components/ArticlePanel';
 import { POST_FORM } from '@/common/kit/req';
-import BitKit from '../../../../../common/kit/BitKit';
+import BitKit from '@/common/kit/BitKit';
 import { observable } from 'mobx';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
 }
 
 const ArticlePage: FunctionComponent<Props> = ({ children, params }) => {
-  const id = Number.parseInt(params.id);
+  const id =  Number.parseInt(params.id) 
 
   const store = useContext(StoreContext);
 

@@ -1,10 +1,11 @@
 import { _IAccount } from './_db';
 import { GET, Ret, POST_FORM, staticBaseUrl } from '../kit/req';
 import BitKit from '@/common/kit/BitKit';
-import { observable, runInAction } from 'mobx';
+import { observable, runInAction } from 'mobx'; 
 
-type IAccount = _IAccount;
-export { IAccount };
+export interface IAccount extends _IAccount{
+
+}
 
 export default class Account implements IAccount {
   @observable id: number = 0;

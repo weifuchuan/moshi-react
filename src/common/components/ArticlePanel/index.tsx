@@ -7,13 +7,13 @@ import { staticBaseUrl } from '@/common/kit/req';
 import 'github-markdown-css/github-markdown.css';
 import AudioPlayer from '../AudioPlayer';
 const ReactAudioPlayer = require('react-audio-player').default;
-import './index.scss'
+import './index.scss';
 
 interface Props {
   article: Article;
 }
 
-function ArticlePanel({ article }: Props) {
+const ArticlePanel = observer(({ article }: Props) => { 
   const [ content, setContent ] = useState(
     <div dangerouslySetInnerHTML={{ __html: article.content }} />
   );
@@ -49,12 +49,12 @@ function ArticlePanel({ article }: Props) {
         <span>
           {new Date(article.publishAt || article.createAt).toLocaleDateString()}
         </span>
-        <span style={{marginLeft:"1em"}} >{article.nickName}</span>
+        <span style={{ marginLeft: '1em' }}>{article.nickName}</span>
       </div>
-      <div style={{marginBottom:"1em"}} >{audio}</div>
+      <div style={{ marginBottom: '1em' }}>{audio}</div>
       <div className={'  markdown-body'}>{content}</div>
     </div>
   );
-}
+});
 
-export default observer(ArticlePanel);
+export default ArticlePanel;

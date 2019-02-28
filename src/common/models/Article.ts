@@ -26,6 +26,7 @@ export default class Article implements IArticle {
   @observable id: number = 0;
   @observable courseId: number = 0;
   @observable title: string = '';
+  @observable summary: string = '';
   @observable content: string = '';
   @observable publishAt?: number | undefined;
   @observable createAt: number = 0;
@@ -101,7 +102,8 @@ export default class Article implements IArticle {
       status,
       audioId: this.audioId,
       content: this.content,
-      title: this.title
+      title: this.title,
+      summary: this.summary
     });
     if (resp.data.state === 'fail') {
       throw resp.data.msg;
@@ -135,18 +137,34 @@ export default class Article implements IArticle {
 
   static async create(
     title: string,
+    summary: string,
     content: string,
     courseId: number,
-    audioId: number
+    audioId: number,
+    actionUri: string='/article/create'
   ) {
-    const resp = await POST_FORM('/article/create', {
+    const resp = await POST_FORM(actionUri, {
       title,
+      summary,
       content,
       courseId,
       audioId
     });
-    if (resp.data.state === 'fail') {
-      throw resp.data.msg;
+    const ret = resp.data;
+    if (ret.state === 'fail') {
+      throw ret.msg;
+    } else {
+      return Article.from({
+        title,
+        summary,
+        content,
+        courseId,
+        audioId,
+        id: ret.id,
+        createAt: ret.createAt,
+        status: Article.STATUS.INIT,
+        contentType: 'html'
+      });
     }
   }
 

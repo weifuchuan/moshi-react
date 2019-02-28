@@ -74,6 +74,11 @@ export const routes: RouteConfig[] = [
         ]
       },
       {
+        path: '/news',
+        component: () => import('./pages/News'),
+        name: '新闻管理'
+      },
+      {
         path: '/apply',
         component: () => import('./pages/Application'),
         name: '申请管理',

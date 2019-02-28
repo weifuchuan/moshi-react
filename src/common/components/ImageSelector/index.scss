@@ -1,0 +1,12 @@
+.ImageSelector{
+  display: flex; 
+  flex-direction: column;
+}
+
+.ant-modal-mask{
+  z-index: 100000000000000000;
+}
+
+.ant-modal-wrap {
+  z-index: 1000000000000000000;
+}

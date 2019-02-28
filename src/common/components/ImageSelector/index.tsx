@@ -4,32 +4,38 @@ import { Avatar, Button, Modal, Upload } from 'antd';
 import AvatarEditor from 'react-avatar-editor';
 import { select, staticBaseUrl } from '@/common/kit/req';
 
-export interface AvatarSelectorProps {
+export interface ImageSelectorProps {
+  height?: number;
+  width?: number;
   value: { base64: string; file: File } | string;
   onChange: (value: { base64: string; file: File }) => void;
 }
 
-export default class AvatarSelector extends Component<AvatarSelectorProps> {
+export default class ImageSelector extends Component<ImageSelectorProps> {
+  static defaultProps = {
+    height: 360 / 2,
+    width: 360
+  };
+
   private editor: AvatarEditor | null = null;
 
   state = {
     visible: false,
     selected: false,
     image: null,
-    allowZoomOut: false,
-    position: { x: 0.5, y: 0.5 },
     scale: 1,
-    rotate: 0,
-    borderRadius: 0
+    allowZoomOut: false,
+    rotate: 0
   };
 
   render() {
     const { value, onChange } = this.props;
     return (
-      <div>
+      <div className={'ImageSelector'}>
         <img
-          width={64}
-          height={64}
+          style={{ border: 'solid 1px #aaa' }}
+          width={360}
+          height={360 * 3 / 5}
           src={
             typeof value === 'string' ? (
               `${staticBaseUrl}${value}`
@@ -38,12 +44,12 @@ export default class AvatarSelector extends Component<AvatarSelectorProps> {
             )
           }
         />
-        <Button style={{ marginLeft: '1em' }} onClick={this.clickUpload}>
-          上传头像
+        <Button style={{ marginTop: '1em' }} onClick={this.clickUpload}>
+          上传图片
         </Button>
 
         <Modal
-          title={'上传头像'}
+          title={'上传图片'}
           visible={this.state.visible}
           onCancel={() => this.setState({ visible: false })}
           onOk={() => {
@@ -77,18 +83,17 @@ export default class AvatarSelector extends Component<AvatarSelectorProps> {
             ) : (
               <React.Fragment>
                 <AvatarEditor
-                  style={{ border: '1px solid #aaa' }}
                   ref={(e) => (this.editor = e)}
                   image={this.state.image!}
-                  width={250}
-                  height={250}
+                  width={360}
+                  height={360 * 3 / 5}
                   border={50}
-                  color={[ 255, 255, 255, 0.6 ]} // RGBA  
+                  color={[ 255, 255, 255, 0.6 ]} // RGBA
                   // @ts-ignore
                   scale={parseFloat(this.state.scale)}
                   // @ts-ignore
                   rotate={parseFloat(this.state.rotate)}
-                />
+                />{' '}
                 <br />
                 Zoom:
                 <input
@@ -117,15 +122,6 @@ export default class AvatarSelector extends Component<AvatarSelectorProps> {
     this.setState({ visible: true });
   };
 
-  handleScale = (e: any) => {
-    const scale = parseFloat(e.target.value);
-    this.setState({ scale });
-  };
-
-  handleAllowZoomOut = ({ target: { checked: allowZoomOut } }: any) => {
-    this.setState({ allowZoomOut });
-  };
-
   rotateLeft = (e: any) => {
     e.preventDefault();
 
@@ -141,45 +137,8 @@ export default class AvatarSelector extends Component<AvatarSelectorProps> {
     });
   };
 
-  handleBorderRadius = (e: any) => {
-    const borderRadius = parseInt(e.target.value);
-    this.setState({ borderRadius });
-  };
-
-  handleXPosition = (e: any) => {
-    const x = parseFloat(e.target.value);
-    this.setState({ position: { ...this.state.position, x } });
-  };
-
-  handleYPosition = (e: any) => {
-    const y = parseFloat(e.target.value);
-    this.setState({ position: { ...this.state.position, y } });
-  };
-
-  handleWidth = (e: any) => {
-    const width = parseInt(e.target.value);
-    this.setState({ width });
-  };
-
-  handleHeight = (e: any) => {
-    const height = parseInt(e.target.value);
-    this.setState({ height });
-  };
-
-  logCallback(e: any) {
-    // eslint-disable-next-line
-    console.log('callback', e);
-  }
-
-  setEditorRef = (editor: any) => {
-    if (editor) this.editor = editor;
-  };
-
-  handlePositionChange = (position: any) => {
-    this.setState({ position });
-  };
-
-  handleDrop = (acceptedFiles: any) => {
-    this.setState({ image: acceptedFiles[0] });
+  handleScale = (e: any) => {
+    const scale = parseFloat(e.target.value);
+    this.setState({ scale });
   };
 }

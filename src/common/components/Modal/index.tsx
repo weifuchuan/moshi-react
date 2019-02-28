@@ -77,11 +77,11 @@ export default class Modal extends React.Component<{
   ): () => void {
     const d = window.document;
     let div: HTMLDivElement | null = d.getElementById(
-      'duwnyhc7837rnnne47yt4e7v578geidc4785'
+      'fc-modal-duwnyhc7837rnnne47yt4e7v578geidc4785'
     ) as HTMLDivElement | null;
     if (!div) {
       div = d.createElement('div');
-      div.id = 'duwnyhc7837rnnne47yt4e7v578geidc4785';
+      div.id = 'fc-modal-duwnyhc7837rnnne47yt4e7v578geidc4785';
       d.getElementsByTagName('body')[0].appendChild(div);
     }
     const self = this as any;
@@ -93,6 +93,9 @@ export default class Modal extends React.Component<{
     ReactDOM.render(modalElem, div, () => {
       self.modal.show();
     });
-    return () => self.modal.hide();
+    return () => {
+      self.modal.hide();
+      ReactDOM.unmountComponentAtNode(self.modal);
+    };
   }
 }

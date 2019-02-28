@@ -1,12 +1,15 @@
 import DatePickerButTime from '@/common/components/DatePickerButTime';
 import { RichEditor2 } from '@/common/components/RichEditor';
-import { Button, Form, Input, InputNumber, DatePicker } from 'antd';
+import { Button, Form, Input, InputNumber, DatePicker, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import BraftEditor from 'braft-editor';
 import React from 'react';
-import CourseAdmin from '../../models/CourseAdmin';
+import CourseAdmin from '@/admin/models/CourseAdmin';
 import './forms.scss';
 import moment from 'moment';
+import ImageSelector from '@/common/components/ImageSelector';
+import { upload } from '@/common/kit/req';
+import isUndefOrNull from '@/common/kit/functions/isUndefOrNull';
 
 class CourseForm extends React.Component<
   FormComponentProps & {
@@ -16,8 +19,24 @@ class CourseForm extends React.Component<
 > {
   handleSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
+    this.props.form.validateFieldsAndScroll(async (err, values) => {
       if (!err) {
+        // base64
+        if (
+          typeof values.introduceImage === 'object' &&
+          !isUndefOrNull(values.introduceImage)
+        ) {
+          const { response } = upload([ (values.introduceImage as any).file ]);
+          const resp = await response;
+          const ret: any = resp.data;
+          if (ret[((values.introduceImage as any).file as File).name]) {
+            values.introduceImage =
+              ret[((values.introduceImage as any).file as File).name];
+          } else {
+            message.error("上传失败");
+            return;
+          }
+        }
         values.introduce = values.introduce.toHTML();
         values.note = values.note.toHTML();
         values.offerTo = values.offerTo
@@ -65,9 +84,10 @@ class CourseForm extends React.Component<
         </Form.Item>
         <Form.Item {...formItemLayout} label="简介图片">
           {getFieldDecorator('introduceImage', {
-            initialValue: course.introduceImage,
+            initialValue: course.introduceImage ? course.introduceImage : '',
             rules: []
-          })(<Input />)}
+            // @ts-ignore
+          })(<ImageSelector />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="订阅须知">
           {getFieldDecorator('note', {

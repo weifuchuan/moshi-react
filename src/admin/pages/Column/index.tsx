@@ -25,7 +25,7 @@ import ReactTable, { Column } from 'react-table';
 import 'react-table/react-table.css';
 import './index.scss';
 
-const ColumnCourse: FunctionComponent = ({ children }) => {
+const ColumnCourse: FunctionComponent = observer(({ children }) => {
   const store = useContext(StoreContext);
 
   const courses = store.columnCourses;
@@ -60,9 +60,9 @@ const ColumnCourse: FunctionComponent = ({ children }) => {
       )}
     </div>
   );
-};
+});
 
-export default observer(ColumnCourse);
+export default (ColumnCourse);
 
 const columns: Column<ICourse>[] = [
   {
@@ -92,7 +92,7 @@ const columns: Column<ICourse>[] = [
                                 <CourseForm
                                   course={course}
                                   onSubmit={async (values) => {
-                                    try {
+                                    try { 
                                       await course.update(values);
                                       message.success('更新成功');
                                       hide();

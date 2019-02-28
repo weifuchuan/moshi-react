@@ -2,8 +2,9 @@ import { _IApplication } from "@/common/models/_db";
 import { POST_FORM, Ret } from "../kit/req";
 import { observable, runInAction } from "mobx";
 
-type IApplication = _IApplication;
-export { IApplication };
+export interface IApplication extends _IApplication{
+
+} 
 
 export default class Application implements IApplication {
   @observable id: number = 0;
