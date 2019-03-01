@@ -5,6 +5,9 @@ import store from "./store";
 import "./index.scss";
 import { StoreContext } from "./store/index";
 import EventEmitter from 'wolfy87-eventemitter';
+import { Im } from "@/common/kit/im";
+
+new Im();
 
 (window as any).bus = new EventEmitter();
 
@@ -16,3 +19,4 @@ ReactDOM.render(
   ) as any,
   document.getElementById("root")
 );
+
