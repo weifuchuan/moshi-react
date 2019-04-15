@@ -7,20 +7,22 @@ export interface Page {
   inlineSource?: string; // 正则表达式，代表内联到html中的资源，如：'.(js|css)$'
 }
 
-export default [ 
+export default [
   {
-    name: "admin",
-    title: "默识 - 后台"
+    name: 'admin',
+    title: '默识 - 后台'
   },
   {
-    name: "teacher",
-    title: "默识 - 作者端"
+    name: 'teacher',
+    title: '默识 - 作者端'
   },
   {
-    name: "learner"
+    name: 'learner'
   },
   // {
-  //   name:"lbt",
-  //   title:"语言广度测试"
+  //   name: 'lbt',
+  //   title: '语言广度测试',
+  //   template:"index.html",
+  //   inlineSource: '.(js|css)$'
   // }
 ] as Page[];

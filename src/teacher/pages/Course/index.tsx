@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import React, { FunctionComponent, useContext, useEffect } from "react";
 import { Control } from "react-keeper";
 import CourseItem from "./CourseItem";
-import "./index.scss";
+import "./index.less";
 
 interface Props {}
 

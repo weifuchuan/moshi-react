@@ -5,7 +5,7 @@ import "github-markdown-css/github-markdown.css";
 import React, { Component } from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import "./index.scss";
+import "./index.less";
 import { fromEvent } from "rxjs";
 import markdownToHtml from "@/common/kit/functions/markdownToHtml";
 require("./all.min.js");

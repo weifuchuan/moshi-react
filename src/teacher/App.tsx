@@ -14,7 +14,7 @@ import { message } from "antd";
 import { computed } from "mobx";
 import * as React from "react";
 import { Control, HashRouter, Route } from "react-keeper";
-import "./App.scss";
+import "./App.less";
 import store from "./store";
 
 const Router = HashRouter;

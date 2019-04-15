@@ -1,1 +1,6 @@
-chrome 49
+[production staging]
+since 2015
+
+[development]
+last 1 chrome version
+last 1 firefox version

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext } from "react";
-import "./index.scss";  
+import "./index.less";  
 
 const Media: FunctionComponent = ({ children }) => {
   return (

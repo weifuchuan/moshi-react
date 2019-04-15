@@ -6,7 +6,7 @@ import Layout from "@/teacher/layouts/Layout";
 import { observer } from "mobx-react-lite";
 import React, { FunctionComponent } from "react";
 import { Control } from "react-keeper";
-import "./index.scss";
+import "./index.less";
 
 const Home: FunctionComponent = () => {
   useTitle("默识 - 作者端");

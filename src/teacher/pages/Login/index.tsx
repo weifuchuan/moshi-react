@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 import qs from "qs";
 import React, { useContext } from "react";
 import { Control } from "react-keeper";
-import "./index.scss";
+import "./index.less";
  
 function Login( ) {
   useTitle("登录 | 默识 - 作者端");

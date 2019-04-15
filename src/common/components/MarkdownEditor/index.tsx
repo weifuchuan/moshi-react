@@ -1,5 +1,5 @@
 import React, { useState, Component } from 'react';
-import './index.scss';
+import './index.less';
 import _ from 'lodash';
 import { upload, staticBaseUrl, baseUrl } from '@/common/kit/req';
 import qs from 'qs';

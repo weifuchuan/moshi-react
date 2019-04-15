@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext, useEffect } from 'react';
-import './index.scss';
+import './index.less';
 import { observer } from 'mobx-react-lite';
 import { StoreContext, StoreContextObserver } from '@/admin/store';
 import ReactTable, { Column } from 'react-table';

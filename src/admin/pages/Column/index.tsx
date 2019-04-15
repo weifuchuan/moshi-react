@@ -23,7 +23,7 @@ import React, {
 import { Control } from 'react-keeper';
 import ReactTable, { Column } from 'react-table';
 import 'react-table/react-table.css';
-import './index.scss';
+import './index.less';
 
 const ColumnCourse: FunctionComponent = observer(({ children }) => {
   const store = useContext(StoreContext);
@@ -44,7 +44,9 @@ const ColumnCourse: FunctionComponent = observer(({ children }) => {
     store.fetchColumnCourses();
     f();
     bus.addListener('routePathChange', f);
-    return () => bus.removeListener('routePathChange', f);
+    return () => {
+      bus.removeListener('routePathChange', f);
+    };
   }, []);
 
   return (
@@ -62,7 +64,7 @@ const ColumnCourse: FunctionComponent = observer(({ children }) => {
   );
 });
 
-export default (ColumnCourse);
+export default ColumnCourse;
 
 const columns: Column<ICourse>[] = [
   {
@@ -92,7 +94,7 @@ const columns: Column<ICourse>[] = [
                                 <CourseForm
                                   course={course}
                                   onSubmit={async (values) => {
-                                    try { 
+                                    try {
                                       await course.update(values);
                                       message.success('更新成功');
                                       hide();
@@ -211,7 +213,7 @@ const columns: Column<ICourse>[] = [
                                         2,
                                         1
                                       );
-                                      course.publishAt=Date.now(); 
+                                      course.publishAt = Date.now();
                                     } else {
                                       message.error(ret.msg);
                                     }

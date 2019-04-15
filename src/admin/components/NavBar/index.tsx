@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './index.scss';
+import './index.less';
 import { Button, Popover, Breadcrumb } from 'antd';
 import { GET } from '@/common/kit/req';
 import { Control, Link } from 'react-keeper';

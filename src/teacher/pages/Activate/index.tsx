@@ -7,7 +7,7 @@ import { message } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import { Control } from "react-keeper";
-import "./index.scss";
+import "./index.less";
 
 function Activate() {
   useTitle("激活 | 默识 - 作者端");

@@ -12,7 +12,7 @@ import React, {
   useState
 } from 'react';
 import ApplicationPanel from '../../components/ApplicationPanel';
-import './index.scss';
+import './index.less';
 
 const Fail: FunctionComponent = ({ children }) => {
   const store = useContext(StoreContext);

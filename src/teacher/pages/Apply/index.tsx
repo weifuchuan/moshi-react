@@ -8,7 +8,7 @@ import { Alert, Button, Input, message, Skeleton } from 'antd';
 import BraftEditor, { EditorState } from 'braft-editor';
 import 'github-markdown-css/github-markdown.css';
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import './index.scss';
+import './index.less';
 import { StoreContext } from '@/teacher/store';
 import { observer } from 'mobx-react-lite';
  

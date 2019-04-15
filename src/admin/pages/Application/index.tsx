@@ -1,7 +1,7 @@
 import { Radio } from 'antd';
 import React, { FunctionComponent } from 'react';
 import { Control } from 'react-keeper';
-import './index.scss';
+import './index.less';
  
 
 const Application: FunctionComponent = ({ children }) => {

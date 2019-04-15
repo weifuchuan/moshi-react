@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './index.scss';
+import './index.less';
 import BraftEditor, { BraftEditorProps, EditorState } from 'braft-editor';
 import { upload, baseUrl, staticBaseUrl } from '@/common/kit/req';
 import 'braft-editor/dist/index.css';

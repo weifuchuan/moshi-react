@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { staticBaseUrl } from '@/common/kit/req';
 import { secondToMS } from '@/common/kit/functions/secondToStr';
-import './index.scss';
+import './index.less';
 import { Button } from 'antd';
 
 export interface AudioPlayerProps {

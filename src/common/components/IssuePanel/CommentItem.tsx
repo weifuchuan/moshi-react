@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./CommentItem.scss";
+import "./CommentItem.less";
 import { IIssueComment } from "@/common/models/Issue";
 import DefaultAvatar from "../DefaultAvatar";
 import { fromNow } from "@/common/kit/functions/moments";

@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback
 } from 'react';
-import './index.scss';
+import './index.less';
 import { useObservable, observer } from 'mobx-react-lite';
 import { _IPresetText } from '@/common/models/_db';
 import { select, GET, POST_FORM } from '@/common/kit/req';

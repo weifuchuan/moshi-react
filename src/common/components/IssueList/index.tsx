@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./index.scss";
+import "./index.less";
 import { IIssue, IssueStatus } from "@/common/models/Issue";
 import { List, Button, Avatar } from "antd";
 import { PaginationProps } from "antd/lib/pagination";

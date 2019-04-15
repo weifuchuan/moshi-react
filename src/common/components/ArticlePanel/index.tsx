@@ -7,7 +7,7 @@ import { staticBaseUrl } from '@/common/kit/req';
 import 'github-markdown-css/github-markdown.css';
 import AudioPlayer from '../AudioPlayer';
 const ReactAudioPlayer = require('react-audio-player').default;
-import './index.scss';
+import './index.less';
 
 interface Props {
   article: Article;

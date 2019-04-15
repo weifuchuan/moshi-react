@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext } from 'react';
-import './index.scss';
+import './index.less';
 import { menu } from './menu';
 import Layout from '@/admin/layouts/Layout';
 import { Control } from 'react-keeper';

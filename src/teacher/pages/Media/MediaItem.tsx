@@ -1,5 +1,5 @@
 import React from "react";
-import "./MediaItem.scss";
+import "./MediaItem.less";
 import { fromNow } from "@/common/kit/functions/moments";
 import { Button } from "antd";
 

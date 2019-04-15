@@ -2,7 +2,7 @@ import * as ReactDOM from "react-dom";
 import * as React from "react";
 import App from "./App";
 import store from "./store";
-import "./index.scss";
+import "./index.less";
 import { StoreContext } from "./store/index";
 import EventEmitter from 'wolfy87-eventemitter';
 import { Im } from "@/common/kit/im";

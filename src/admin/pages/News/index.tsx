@@ -2,7 +2,7 @@ import { StoreContext } from '@/admin/store';
 import { observer } from 'mobx-react-lite';
 import React, { FunctionComponent, useContext, useCallback } from 'react';
 import 'react-table/react-table.css';
-import './index.scss';
+import './index.less';
 import ArticlePage from '../Column/pages/ArticlePage';
 import { Button, message } from 'antd';
 import Modal from '@/common/components/Modal';

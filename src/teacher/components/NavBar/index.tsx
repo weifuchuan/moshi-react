@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.scss";
+import "./index.less";
 import { Button, Popover } from "antd"; 
 import { GET } from "@/common/kit/req";
 import { Control } from "react-keeper";

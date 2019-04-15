@@ -9,7 +9,7 @@ import { observer, Observer } from 'mobx-react-lite';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import ReactTable, { Column } from 'react-table';
 import 'react-table/react-table.css';
-import './index.scss';
+import './index.less';
 
 const ButtonGroup = Button.Group;
 

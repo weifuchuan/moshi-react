@@ -1,6 +1,6 @@
 import * as React from "react";
 import { HashRouter, Route } from "react-keeper";
-import "./App.scss";
+import "./App.less";
 import routes from "./router.config";
 import { StoreContext } from "./store/index";
 import MarkdownEditor from '@/common/components/MarkdownEditor'; 

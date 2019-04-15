@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext } from 'react';
-import './index.scss';
+import './index.less';
 import LoginPanel from '@/common/components/LoginPanel';
 import { message } from 'antd';
 import { fetchBase64Image } from '@/common/kit/req';

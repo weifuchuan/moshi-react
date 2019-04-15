@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import "./index.scss";
+import "./index.less";
 import { IIssue, IIssueComment } from "@/common/models/Issue";
 import { Button, Icon, List } from "antd";
 import { fromNow } from "@/common/kit/functions/moments";

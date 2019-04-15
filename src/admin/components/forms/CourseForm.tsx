@@ -5,7 +5,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import BraftEditor from 'braft-editor';
 import React from 'react';
 import CourseAdmin from '@/admin/models/CourseAdmin';
-import './forms.scss';
+import './forms.less';
 import moment from 'moment';
 import ImageSelector from '@/common/components/ImageSelector';
 import { upload } from '@/common/kit/req';

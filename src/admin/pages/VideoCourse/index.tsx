@@ -23,7 +23,7 @@ import React, {
 import { Control } from 'react-keeper';
 import ReactTable, { Column } from 'react-table';
 import 'react-table/react-table.css';
-import './index.scss';
+import './index.less';
 
 const VideoCourse: FunctionComponent = ({ children }) => {
   const store = useContext(StoreContext);
@@ -44,7 +44,9 @@ const VideoCourse: FunctionComponent = ({ children }) => {
     store.fetchVideoCourses();
     f();
     bus.addListener('routePathChange', f);
-    return () => bus.removeListener('routePathChange', f);
+    return () => {
+      bus.removeListener('routePathChange', f);
+    };
   }, []);
 
   return (

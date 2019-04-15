@@ -1,7 +1,7 @@
 import { Button, Form, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import React from 'react';
-import './forms.scss';
+import './forms.less';
 import BraftEditor from 'braft-editor';
 import { RichEditor2 } from '@/common/components/RichEditor';
 import ArticleAdmin from '@/admin/models/ArticleAdmin';

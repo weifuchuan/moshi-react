@@ -8,7 +8,7 @@ import { formatTime } from '@/common/kit/functions/moments';
 import markdownToHtml from '@/common/kit/functions/markdownToHtml';
 import Application from '@/common/models/Application';
 import { Alert } from 'antd';
-import './index.scss';
+import './index.less';
 
 interface Props {
   application: IApplicationAdmin;

@@ -18,7 +18,7 @@ import BraftEditor from "braft-editor";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, Control } from "react-keeper";
-import "./index.scss";
+import "./index.less";
 
 const TabPane = Tabs.TabPane;
 

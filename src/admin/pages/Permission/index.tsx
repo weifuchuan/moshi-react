@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import './index.scss';
+import './index.less';
 import { TimeCell, OptionalCell, TextCell } from '@/common/components/tables';
 import {
   IPermission,

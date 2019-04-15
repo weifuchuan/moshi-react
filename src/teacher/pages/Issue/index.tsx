@@ -7,7 +7,7 @@ import React, {
   useState,
   useContext
 } from "react";
-import "./index.scss";
+import "./index.less";
 import { ICourse } from "@/common/models/Course";
 import Panel from "@/common/components/Panel";
 import { Tree, Button, Skeleton } from "antd";

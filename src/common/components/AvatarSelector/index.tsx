@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './index.scss';
+import './index.less';
 import { Avatar, Button, Modal, Upload } from 'antd';
 import AvatarEditor from 'react-avatar-editor';
 import { select, staticBaseUrl } from '@/common/kit/req';

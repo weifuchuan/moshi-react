@@ -11,6 +11,6 @@ export default function immediateInterval(
     subscriber.next = function(this: Subscriber<number>, i: number) {
       next.bind(this)(i + 1);
     }.bind(subscriber);
-    interval$.subscribe(subscriber);
+    return interval$.subscribe(subscriber);
   });
 }

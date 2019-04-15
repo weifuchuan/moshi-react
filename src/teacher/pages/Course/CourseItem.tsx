@@ -1,6 +1,6 @@
 import Course, { ICourse } from "@/common/models/Course";
 import React from "react";
-import "./CourseItem.scss";
+import "./CourseItem.less";
 
 interface Props {
   course: ICourse;

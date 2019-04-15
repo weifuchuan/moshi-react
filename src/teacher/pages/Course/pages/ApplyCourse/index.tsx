@@ -11,7 +11,7 @@ import "github-markdown-css/github-markdown.css";
 import { observer } from "mobx-react-lite";
 import React, { FunctionComponent, useContext, useEffect, useState } from "react";
 import { Control } from "react-keeper";
-import "./index.scss";
+import "./index.less";
 
 const Option = Select.Option;
 

@@ -7,7 +7,8 @@ import {
   Modal,
   notification,
   Spin,
-  Table
+  Table,
+  Input
 } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { ColumnProps } from 'antd/lib/table';
@@ -19,10 +20,14 @@ import * as rxjs from 'rxjs';
 import { Observable } from 'rxjs';
 import { useObservable } from 'rxjs-hooks';
 import * as operators from 'rxjs/operators';
-import { take } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
 import EventEmitter from 'wolfy87-eventemitter';
-import './App.scss';
+import './App.less';
 import CEI from './copy_example_image';
+import $ from 'jquery';
+
+// const electron: any = require('electron');
+declare const electron: any;
 
 require('./recorder/recorder-core.js');
 require('./recorder/engine/mp3.js');
@@ -30,12 +35,6 @@ require('./recorder/engine/mp3-engine.js');
 declare var Recorder: any;
 
 export default observer(function App() {
-  useEffect(() => {
-    document.getElementById('preloading')!.parentElement!.removeChild(
-      document.getElementById('preloading')!
-    );
-  }, []);
-
   const steps = [ <Ready />, <Play />, <End /> ];
 
   return <div className={'App'}>{steps[store.step]}</div>;
@@ -49,12 +48,16 @@ interface TestItem {
 }
 
 class Store {
+  @observable name = '';
+
   @observable step = 0;
 
   @observable countdown = 5;
+  @observable wordTimeLimit = 40; // second
 
   @observable analyzed = false;
   @observable audioDownloadUrl = '';
+  @observable audioBase64 = '';
 
   @observable items: TestItem[] = [];
 
@@ -177,11 +180,17 @@ const Ready = observer(() => {
           store.randSort();
           store.step++;
         }}
-        disabled={!store.imported}
+        disabled={!store.imported || store.name.trim() === ''}
         style={{ marginLeft: 'auto', marginRight: 'auto', marginBottom: '1em' }}
       >
         开始测试（单词将随机重排序）
       </Button>
+      <h3>
+        姓名：<Input
+          value={store.name}
+          onChange={(e: any) => (store.name = e.target.value)}
+        />
+      </h3>
       <h3>
         单组单词数：
         <InputNumber
@@ -195,6 +204,13 @@ const Ready = observer(() => {
           min={store.minWordsCount}
           value={store.maxWordsCount}
           onChange={(value) => value && (store.maxWordsCount = value)}
+        />
+      </h3>
+      <h3>
+        单个单词造句限制时间（秒）：
+        <InputNumber
+          value={store.wordTimeLimit}
+          onChange={(value) => value && (store.wordTimeLimit = value)}
         />
       </h3>
       <h3>
@@ -343,7 +359,15 @@ bus.addListener('end', ({ type, ...params }: any) => {
   if (type === 'full') {
     store.step++;
     recorder.stop(
-      (blob: Blob, duration: number) => {
+      async (blob: Blob, duration: number) => {
+        await new Promise((resolve) => {
+          let reader = new FileReader();
+          reader.onloadend = () => {
+            store.audioBase64 = reader.result as string;
+            resolve();
+          };
+          reader.readAsDataURL(blob);
+        });
         store.audioDownloadUrl = URL.createObjectURL(blob);
         recorder.close();
         store.analyzed = true;
@@ -414,11 +438,25 @@ const stream$ = new Observable<
                   });
                   await new Promise(async (resolve, reject) => {
                     subscriber.next({ type: '显示问号', count: i });
+                    let clicked = false;
                     const onClick = () => {
+                      clicked = true;
                       resolve(); // next 问号
                       bus.removeListener('click', onClick);
                     };
                     bus.addListener('click', onClick);
+                    immediateInterval(1000)
+                      .pipe(take(store.wordTimeLimit + 1))
+                      .pipe(map((x) => store.wordTimeLimit - x))
+                      .subscribe(
+                        (x) => {},
+                        (err) => {},
+                        () => {
+                          if (!clicked) {
+                            bus.emit('click');
+                          }
+                        }
+                      );
                   });
                   // 造句结束
                   bus.emit('end', {
@@ -466,7 +504,7 @@ const Play = () => {
     );
   } else if (action.type === '显示问号') {
     comp = (
-      <span style={{ fontSize: '3em', fontWeight: 'bolder' }}>
+      <span style={{ fontSize: '6em', fontWeight: 'bolder' }}>
         {Array.from(new Array(action.count), () => '？').reduce(
           (prev, curr) => prev + curr,
           ''
@@ -536,6 +574,53 @@ const End = observer(() => {
               >
                 下载录音
               </Button>
+              <Button
+                type="primary"
+                style={{ margin: '0 1em' }}
+                onClick={(e: any) => {
+                  $('#select-file-dir-path').click();
+                }}
+              >
+                导出到文件
+              </Button>
+              <input
+                id={'select-file-dir-path'}
+                type="file"
+                {...{
+                  webkitdirectory: 'true'
+                } as any}
+                style={{ display: 'none' }}
+                onChange={(e: any) => {
+                  const dir = (document.getElementById(
+                    'select-file-dir-path'
+                  ) as any).files[0].path;
+                  electron.ipcRenderer.sendSync(
+                    'save-to-file',
+                    dir,
+                    store.name,
+                    JSON.stringify(
+                      store.items.map(
+                        (item) =>
+                          ({
+                            title: item.name,
+                            children: [
+                              { title: '单词', dataIndex: item.name },
+                              {
+                                title: '用时(ms)',
+                                dataIndex: item.name + ':' + 'time'
+                              }
+                            ]
+                          } as ColumnProps<{
+                            [key: string]: string | number;
+                          }>)
+                      )
+                    ),
+                    JSON.stringify(store.analyzedTableDataSource),
+                    store.audioBase64
+                  );
+                  message.success("保存成功")
+                }}
+              />
             </h3>
             <Table
               columns={[
@@ -607,7 +692,7 @@ const End = observer(() => {
   );
 });
 
-if (__DEV__) {
+if (true) {
   store.items = observable([
     {
       name: 'Test1',

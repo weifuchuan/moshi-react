@@ -3,7 +3,7 @@ import Layout from "@/teacher/layouts/Layout";
 import { StoreContext } from "@/teacher/store";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
-import "./index.scss";
+import "./index.less";
 import {
   Skeleton,
   Tabs,

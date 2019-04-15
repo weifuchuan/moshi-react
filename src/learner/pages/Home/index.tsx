@@ -1,17 +1,14 @@
-import React from "react";
-import { observer, inject } from "mobx-react";
+import React from "react"; 
 import { Store } from "@/learner/store";
 import { observable } from "mobx";
-import "./index.scss";
+import "./index.less";
 import RegPanel from "@/common/components/RegPanel";
 import LoginPanel from "@/common/components/LoginPanel";
 
 interface Props {
   store: Store;
 }
-
-@inject("store")
-@observer
+ 
 export default class Home extends React.Component<Props> {
   @observable loading = false;
 

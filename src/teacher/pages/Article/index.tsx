@@ -23,7 +23,7 @@ import BraftEditor from 'braft-editor';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { FunctionComponent, useContext, useEffect, useRef } from 'react';
 import { Link, Control } from 'react-keeper';
-import './index.scss';
+import './index.less';
 
 interface Props {
   params: {
