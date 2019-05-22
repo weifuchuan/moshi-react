@@ -1,11 +1,11 @@
 'use strict';
 
 // use ` require("xxx") ` for import polyfils
-
-require("@babel/polyfill")
-require("react-app-polyfill/ie9")
+ 
+// require("react-app-polyfill/ie11")
 require("intersection-observer/intersection-observer.js")
 
-import EventEmitter from "wolfy87-eventemitter";
+var EventEmitter = require("wolfy87-eventemitter")
+window.EventEmitter=EventEmitter;
 
-window.EventEmitter = EventEmitter; 
+const bus = new EventEmitter();

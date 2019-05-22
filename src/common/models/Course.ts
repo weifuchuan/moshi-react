@@ -94,12 +94,12 @@ export default class Course implements ICourse {
       createAt: courseCreateAt,
       status: Course.STATUS.INIT,
       name,
-      shortIntro:'',
+      shortIntro: '',
       introduce,
       courseType,
       buyerCount: 0,
       accountId,
-      lectureCount:0
+      lectureCount: 0
     });
   }
 
@@ -123,6 +123,18 @@ export default class Course implements ICourse {
   static async update(id: number, items: { [key: string]: number | string }) {
     const resp = await POST_FORM('/course/update', { id, ...items });
     return resp.data;
+  }
+
+  static async addCourseType(courseId: number, typeName: string): Promise<Ret> {
+    try {
+      const resp = await POST_FORM('/admin/course/addCourseType', {
+        courseId,
+        typeName
+      });
+      return resp.data;
+    } catch (err) {
+      return { state: 'fail', msg: err.toString() };
+    }
   }
 
   /**

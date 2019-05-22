@@ -20,3 +20,6 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
+if(__DEV__){
+  (window as any).mobx = require("mobx"); 
+}

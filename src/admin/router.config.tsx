@@ -1,8 +1,7 @@
 import LoadingRoute from '@/common/components/LoadingRoute';
-import _ from 'lodash';
+import flatMap from 'lodash/flatMap';
 import React from 'react';
-import authConfig from './authority.config';
-import { Filter } from 'react-keeper';
+import authConfig from './authority.config'; 
 
 export interface RouteConfig {
   path: string;
@@ -64,6 +63,11 @@ export const routes: RouteConfig[] = [
                 name: '章节管理'
               }
             ]
+          },
+          {
+            path: '/type',
+            component: () => import('./pages/CourseType'),
+            name: '课程分类', 
           },
           {
             path: '/:id/issue',
@@ -160,7 +164,7 @@ function copyRoutes(routes: RouteConfig[]): RouteConfig[] {
 function buildRoutes(routes: RouteConfig[]) {
   routes = copyRoutes(routes);
 
-  return _.flatMap(
+  return flatMap(
     routes.map((route) => {
       let routes2 = [ route ];
       if (route.flatChildren && route.routes) {

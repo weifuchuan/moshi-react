@@ -1,43 +1,63 @@
-// eslint-disable-next-line import/no-commonjs
+const devMode = process.env.NODE_ENV !== 'production';
+
 module.exports = {
-  "presets": [
-    "@babel/preset-env",
-    "@babel/preset-react",
-    "@babel/preset-typescript"
+  presets: [
+    [ '@babel/preset-env', { useBuiltIns: 'usage', corejs: '3' } ],
+    '@babel/preset-react',
+    '@babel/preset-typescript'
   ],
-  "plugins": [
-    "@babel/plugin-transform-runtime",
-    ["@babel/plugin-proposal-decorators", {
-      "legacy": true
-    }],
-    ["@babel/plugin-proposal-class-properties", {
-      "loose": true
-    }],
-    "@babel/plugin-syntax-dynamic-import",
-    ["module-resolver", {
-      "root": ["."],
-      "alias": {
-        "@": "./src"
-      }
-    }],
-    ["@babel/plugin-proposal-pipeline-operator", {
-      "proposal": "minimal"
-    }],
+  plugins: [
+    '@babel/plugin-transform-runtime',
     [
-      "import",
+      '@babel/plugin-proposal-decorators',
       {
-        "libraryName": "antd",
-        "libraryDirectory": "es",
-        "style": "css"
-      },
-      "import-antd"
+        legacy: true
+      }
     ],
-    ["import", {
-      "libraryName": "@material-ui/core",
-      "libraryDirectory": "es",
-      "style": false,
-      "camel2DashComponentName": false
-    }, "import-material"],
-    "babel-plugin-styled-components"
+    [
+      '@babel/plugin-proposal-class-properties',
+      {
+        loose: true
+      }
+    ],
+    '@babel/plugin-syntax-dynamic-import',
+    [
+      'module-resolver',
+      {
+        root: [ '.' ],
+        alias: {
+          '@': './src'
+        }
+      }
+    ], 
+    [
+      'import',
+      {
+        libraryName: 'antd',
+        libraryDirectory: 'es',
+        style: 'css'
+      },
+      'import-antd'
+    ],
+    [
+      'import',
+      {
+        libraryName: '@material-ui/core',
+        libraryDirectory: 'es',
+        style: false,
+        camel2DashComponentName: false
+      },
+      'import-material'
+    ],
+    [
+      'import',
+      {
+        libraryName: 'lodash',
+        libraryDirectory: '',
+        camel2DashComponentName: false
+      },
+      'import-lodash'
+    ],
+    'babel-plugin-styled-components'
   ]
-}
+};
